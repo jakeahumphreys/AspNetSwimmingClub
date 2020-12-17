@@ -88,11 +88,6 @@ namespace MVCWebAssignment1.Models
         public bool IsAllowedToSwim { get; set; }
 
         [Required]
-        [Display(Name = "Active?")]
-        public bool IsActive { get; set; }
-
-
-        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
@@ -111,11 +106,6 @@ namespace MVCWebAssignment1.Models
         [Required]
         [Display(Name ="Role")]
         public string Role { get; set; }
-    }
-
-    public class EditUserViewModel
-    { 
-
     }
 
 

@@ -25,7 +25,6 @@ namespace MVCWebAssignment1.Models
         public string Address { get; set; }
 
         public string DateOfBirth { get; set; }
-        public bool IsActive { get; set; }
         public bool IsAllowedToSwim { get; set; }
 
         public virtual FamilyGroup FamilyGroup { get; set; }

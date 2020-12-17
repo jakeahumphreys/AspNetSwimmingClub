@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Globalization;
@@ -9,13 +10,15 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using MVCWebAssignment1.Customisations;
 using MVCWebAssignment1.Models;
 
 namespace MVCWebAssignment1.Controllers
 {
-    [Authorize]
+
     public class AccountController : Controller
     {
         private ApplicationSignInManager _signInManager;
@@ -56,14 +59,33 @@ namespace MVCWebAssignment1.Controllers
                 _userManager = value;
             }
         }
-
+        [CustomAuthorize(Roles = "Parent,Admin")]
         public ActionResult Index()
         {
+            if (UserManager.IsInRole(User.Identity.GetUserId(), "Parent"))
+            {
+                var parentGroupId = _context.Users.Find(User.Identity.GetUserId()).FamilyGroup.FamilyGroupId;
+                List<ApplicationUser> memberList = new List<ApplicationUser>();
+
+                foreach(var user in _context.Users.ToList())
+                {
+                    if(user.FamilyGroup.FamilyGroupId == parentGroupId)
+                    {
+                        if(!UserManager.IsInRole(user.Id, "Parent"))
+                        {
+                            memberList.Add(user);
+                        }
+                    };
+                    Debug.WriteLine(memberList.Count());
+                }
+                return View(memberList);
+
+            }
             return View(_context.Users.ToList());
         }
 
         // GET: DeleteMe/Details/5
-
+        [CustomAuthorize(Roles = "Parent,Admin")]
         public ActionResult Details(string id)
         {
             if (id == null)
@@ -81,19 +103,33 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: DeleteMe/Edit/5
-
+        [CustomAuthorize(Roles = "Parent,Admin")]
         public ActionResult Edit(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
+
+            EditUserViewModel editUserModel = new EditUserViewModel();
+
             ApplicationUser applicationUser = _context.Users.Find(id);
             if (applicationUser == null)
             {
                 return HttpNotFound();
             }
-            return View(applicationUser);
+
+            editUserModel.User = applicationUser;
+            editUserModel.FamilyGroups = _context.FamilyGroups.ToList();
+
+            if(editUserModel.User.FamilyGroup != null)
+            {
+                editUserModel.FamilyGroupId = editUserModel.User.FamilyGroup.FamilyGroupId.ToString();
+            }
+            
+
+            return View(editUserModel);
         }
 
         // POST: DeleteMe/Edit/5
@@ -101,20 +137,45 @@ namespace MVCWebAssignment1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-
-        public ActionResult Edit([Bind(Include = "Id,Name,Gender,Address,DateOfBirth,IsActive,IsAllowedToSwim,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName")] ApplicationUser applicationUser)
+        [CustomAuthorize(Roles = "Parent,Admin")]
+        public ActionResult Edit(EditUserViewModel editUserViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Entry(applicationUser).State = EntityState.Modified;
+                int familyId;
+                int.TryParse(editUserViewModel.FamilyGroupId,out familyId); //Convert ID from DropDownList to Integer
+
+                //Set ViewModel user's family group to result of a search of family groups by ID
+                editUserViewModel.User.FamilyGroup = _context.FamilyGroups.Where(x => x.FamilyGroupId == familyId).SingleOrDefault();
+
+                //load existing user from database
+                ApplicationUser user = _context.Users.Find(editUserViewModel.User.Id);
+
+                //Set new properties from model
+                user.Name = editUserViewModel.User.Name;
+                user.Gender = editUserViewModel.User.Gender;
+                user.Address = editUserViewModel.User.Address;
+                user.IsAllowedToSwim = editUserViewModel.User.IsAllowedToSwim;
+                user.Email = editUserViewModel.User.Email;
+                if(user.UserName != user.Email)
+                {
+                    user.UserName = user.Email;
+                }
+                user.PhoneNumber = editUserViewModel.User.PhoneNumber;
+                user.LockoutEnabled = editUserViewModel.User.LockoutEnabled;
+                user.LockoutEndDateUtc = editUserViewModel.User.LockoutEndDateUtc;
+                user.FamilyGroup = editUserViewModel.User.FamilyGroup;
+
+                //Save user back to database
+                _context.Entry(user).State = EntityState.Modified;
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(applicationUser);
+            return View(editUserViewModel);
         }
 
         // GET: DeleteMe/Delete/5
-
+        [CustomAuthorize(Roles = "Parent,Admin")]
         public ActionResult Delete(string id)
         {
             if (id == null)
@@ -241,7 +302,7 @@ namespace MVCWebAssignment1.Controllers
             Debug.WriteLine("Saving!");
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { Name = model.Name, Gender = model.Gender, Address = model.Address, PhoneNumber = model.PhoneNumber, IsActive = model.IsActive, IsAllowedToSwim = model.IsAllowedToSwim, UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { Name = model.Name, Gender = model.Gender, Address = model.Address, DateOfBirth = model.DateOfBirth, PhoneNumber = model.PhoneNumber, IsAllowedToSwim = model.IsAllowedToSwim, UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -297,13 +358,6 @@ namespace MVCWebAssignment1.Controllers
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
-
-                // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form

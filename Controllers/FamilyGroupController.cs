@@ -1,6 +1,8 @@
-﻿using MVCWebAssignment1.Models;
+﻿using Microsoft.AspNet.Identity;
+using MVCWebAssignment1.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -46,7 +48,7 @@ namespace MVCWebAssignment1.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult Create([Bind(Include = "Id, Name, Parent, Children")] FamilyGroup familygroup)
+        public ActionResult Create(FamilyGroup familygroup)
         {
             if (ModelState.IsValid)
             {

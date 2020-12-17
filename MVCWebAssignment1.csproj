@@ -171,6 +171,8 @@
     <Compile Include="Controllers\FamilyGroupController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Customisations\CustomAuthorize.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -186,8 +188,13 @@
     <Compile Include="Migrations\202012170237241_AddFamilyGroups.Designer.cs">
       <DependentUpon>202012170237241_AddFamilyGroups.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202012171519077_RemoveIsActive.cs" />
+    <Compile Include="Migrations\202012171519077_RemoveIsActive.Designer.cs">
+      <DependentUpon>202012171519077_RemoveIsActive.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\EditUserViewModel.cs" />
     <Compile Include="Models\FamilyGroup.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -256,6 +263,8 @@
     <Content Include="Views\Account\Edit.cshtml" />
     <Content Include="Views\FamilyGroup\Index.cshtml" />
     <Content Include="Views\FamilyGroup\Details.cshtml" />
+    <Content Include="Views\FamilyGroup\Create.cshtml" />
+    <Content Include="Views\Error\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -282,6 +291,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202012170237241_AddFamilyGroups.resx">
       <DependentUpon>202012170237241_AddFamilyGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012171519077_RemoveIsActive.resx">
+      <DependentUpon>202012171519077_RemoveIsActive.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
