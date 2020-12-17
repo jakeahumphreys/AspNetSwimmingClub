@@ -10,7 +10,6 @@ namespace MVCWebAssignment1.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
-            ContextKey = "MVCWebAssignment1.Models.ApplicationDbContext";
         }
 
         protected override void Seed(MVCWebAssignment1.Models.ApplicationDbContext context)

@@ -1,4 +1,7 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -24,13 +27,18 @@ namespace MVCWebAssignment1.Models
         public string DateOfBirth { get; set; }
         public bool IsActive { get; set; }
         public bool IsAllowedToSwim { get; set; }
+
+        public virtual FamilyGroup FamilyGroup { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+
+        public DbSet<FamilyGroup> FamilyGroups { get; set; }
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
+
         }
 
         public static ApplicationDbContext Create()

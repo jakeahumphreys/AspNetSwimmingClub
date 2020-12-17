@@ -7,13 +7,13 @@ namespace MVCWebAssignment1.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class UserBooleanFields : IMigrationMetadata
+    public sealed partial class Test : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(UserBooleanFields));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Test));
         
         string IMigrationMetadata.Id
         {
-            get { return "202012152327447_UserBooleanFields"; }
+            get { return "202012170228095_Test"; }
         }
         
         string IMigrationMetadata.Source

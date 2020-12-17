@@ -1,0 +1,35 @@
+﻿@model MVCWebAssignment1.Models.FamilyGroup
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>FamilyGroup</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.GroupName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GroupName)
+        </dd>
+        <ul>
+            @foreach (var item in Model.ApplicationUser)
+            {
+            <li>
+                @Html.ActionLink(item.Name, "Details", "Account", new { id = item.Id},null)
+            </li>
+            }
+        </ul>
+       
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.FamilyGroupId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

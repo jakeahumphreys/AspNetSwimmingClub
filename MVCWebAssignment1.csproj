@@ -168,29 +168,27 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\FamilyGroupController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202012152257529_InitialCreate.cs" />
-    <Compile Include="Migrations\202012152257529_InitialCreate.Designer.cs">
-      <DependentUpon>202012152257529_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\202012170222267_InitialCreate.cs" />
+    <Compile Include="Migrations\202012170222267_InitialCreate.Designer.cs">
+      <DependentUpon>202012170222267_InitialCreate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202012152319130_RemovedMember.cs" />
-    <Compile Include="Migrations\202012152319130_RemovedMember.Designer.cs">
-      <DependentUpon>202012152319130_RemovedMember.cs</DependentUpon>
+    <Compile Include="Migrations\202012170228095_Test.cs" />
+    <Compile Include="Migrations\202012170228095_Test.Designer.cs">
+      <DependentUpon>202012170228095_Test.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202012152327447_UserBooleanFields.cs" />
-    <Compile Include="Migrations\202012152327447_UserBooleanFields.Designer.cs">
-      <DependentUpon>202012152327447_UserBooleanFields.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012152344177_RemoveDuplicatePhoneNumber.cs" />
-    <Compile Include="Migrations\202012152344177_RemoveDuplicatePhoneNumber.Designer.cs">
-      <DependentUpon>202012152344177_RemoveDuplicatePhoneNumber.cs</DependentUpon>
+    <Compile Include="Migrations\202012170237241_AddFamilyGroups.cs" />
+    <Compile Include="Migrations\202012170237241_AddFamilyGroups.Designer.cs">
+      <DependentUpon>202012170237241_AddFamilyGroups.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\FamilyGroup.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -256,6 +254,8 @@
     <Content Include="Views\Account\Delete.cshtml" />
     <Content Include="Views\Account\Details.cshtml" />
     <Content Include="Views\Account\Edit.cshtml" />
+    <Content Include="Views\FamilyGroup\Index.cshtml" />
+    <Content Include="Views\FamilyGroup\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -274,17 +274,14 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202012152257529_InitialCreate.resx">
-      <DependentUpon>202012152257529_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202012170222267_InitialCreate.resx">
+      <DependentUpon>202012170222267_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012152319130_RemovedMember.resx">
-      <DependentUpon>202012152319130_RemovedMember.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202012170228095_Test.resx">
+      <DependentUpon>202012170228095_Test.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012152327447_UserBooleanFields.resx">
-      <DependentUpon>202012152327447_UserBooleanFields.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012152344177_RemoveDuplicatePhoneNumber.resx">
-      <DependentUpon>202012152344177_RemoveDuplicatePhoneNumber.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202012170237241_AddFamilyGroups.resx">
+      <DependentUpon>202012170237241_AddFamilyGroups.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

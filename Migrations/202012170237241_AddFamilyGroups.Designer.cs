@@ -7,13 +7,13 @@ namespace MVCWebAssignment1.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class InitialCreate : IMigrationMetadata
+    public sealed partial class AddFamilyGroups : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialCreate));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AddFamilyGroups));
         
         string IMigrationMetadata.Id
         {
-            get { return "202012152257529_InitialCreate"; }
+            get { return "202012170237241_AddFamilyGroups"; }
         }
         
         string IMigrationMetadata.Source

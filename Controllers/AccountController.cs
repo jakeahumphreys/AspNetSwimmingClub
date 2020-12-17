@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -62,13 +63,16 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: DeleteMe/Details/5
+
         public ActionResult Details(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            
             ApplicationUser applicationUser = _context.Users.Find(id);
+           
             if (applicationUser == null)
             {
                 return HttpNotFound();
@@ -77,6 +81,7 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: DeleteMe/Edit/5
+
         public ActionResult Edit(string id)
         {
             if (id == null)
@@ -96,6 +101,7 @@ namespace MVCWebAssignment1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public ActionResult Edit([Bind(Include = "Id,Name,Gender,Address,DateOfBirth,IsActive,IsAllowedToSwim,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName")] ApplicationUser applicationUser)
         {
             if (ModelState.IsValid)
@@ -108,6 +114,7 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: DeleteMe/Delete/5
+
         public ActionResult Delete(string id)
         {
             if (id == null)
@@ -220,6 +227,7 @@ namespace MVCWebAssignment1.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            Debug.WriteLine("View opened!");
             return View();
         }
 
@@ -230,6 +238,7 @@ namespace MVCWebAssignment1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
+            Debug.WriteLine("Saving!");
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { Name = model.Name, Gender = model.Gender, Address = model.Address, PhoneNumber = model.PhoneNumber, IsActive = model.IsActive, IsAllowedToSwim = model.IsAllowedToSwim, UserName = model.Email, Email = model.Email };
@@ -238,11 +247,10 @@ namespace MVCWebAssignment1.Controllers
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    if(model.Role != "")
+                    {
+                        UserManager.AddToRole(user.Id, model.Role);
+                    }
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -515,6 +523,8 @@ namespace MVCWebAssignment1.Controllers
                 return HttpContext.GetOwinContext().Authentication;
             }
         }
+
+        public object ViewModel { get; private set; }
 
         private void AddErrors(IdentityResult result)
         {
