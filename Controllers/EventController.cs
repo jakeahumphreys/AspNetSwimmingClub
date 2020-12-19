@@ -6,18 +6,25 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
 
 namespace MVCWebAssignment1.Controllers
 {
     public class EventController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private EventRepository _eventRepository;
+        private MeetRepository _meetRepository;
 
+        public EventController()
+        {
+            _eventRepository = new EventRepository(new EventContext());
+            _meetRepository = new MeetRepository(new MeetContext());
+        }
         // GET: Event
         public ActionResult Index()
         {
-            return View(db.Events.ToList());
+            return View(_eventRepository.GetEvents());
         }
 
         // GET: Event/Details/5
@@ -28,7 +35,7 @@ namespace MVCWebAssignment1.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             
-            Event @event = db.Events.Find(id);
+            Event @event = _eventRepository.GetEventById(id);
             ViewBag.MeetId = @event.Meet.Id;
 
             if (@event == null)
@@ -58,14 +65,14 @@ namespace MVCWebAssignment1.Controllers
             {
                 if(eventViewModel.MeetId > 0)
                 {
-                    Meet meet = db.Meets.Find(eventViewModel.MeetId);
+                    Meet meet = _meetRepository.GetMeetById(eventViewModel.MeetId);
                     if(meet != null)
                     {
                         eventViewModel.Event.Meet = meet;
                     }
                 }
-                db.Events.Add(eventViewModel.Event);
-                db.SaveChanges();
+                _eventRepository.InsertEvent(eventViewModel.Event);
+                _eventRepository.Save();
                 return RedirectToAction("Index");
             }
 
@@ -79,7 +86,7 @@ namespace MVCWebAssignment1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Event @event = db.Events.Find(id);
+            Event @event = _eventRepository.GetEventById(id);
             if (@event == null)
             {
                 return HttpNotFound();
@@ -96,8 +103,8 @@ namespace MVCWebAssignment1.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(@event).State = EntityState.Modified;
-                db.SaveChanges();
+                _eventRepository.UpdateEvent(@event);
+                _eventRepository.Save();
                 return RedirectToAction("Index");
             }
             return View(@event);
@@ -110,7 +117,7 @@ namespace MVCWebAssignment1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Event @event = db.Events.Find(id);
+            Event @event = _eventRepository.GetEventById(id);
             if (@event == null)
             {
                 return HttpNotFound();
@@ -123,9 +130,9 @@ namespace MVCWebAssignment1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Event @event = db.Events.Find(id);
-            db.Events.Remove(@event);
-            db.SaveChanges();
+            Event @event = _eventRepository.GetEventById(id);
+            _eventRepository.DeleteEvent(@event);
+            _eventRepository.Save();
             return RedirectToAction("Index");
         }
 
@@ -133,7 +140,8 @@ namespace MVCWebAssignment1.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _eventRepository.Dispose();
+                _meetRepository.Dispose();
             }
             base.Dispose(disposing);
         }

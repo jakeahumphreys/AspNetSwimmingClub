@@ -176,6 +176,15 @@
     <Compile Include="Controllers\MeetController.cs" />
     <Compile Include="Controllers\VenueController.cs" />
     <Compile Include="Customisations\CustomAuthorize.cs" />
+    <Compile Include="DAL\EventRepository.cs" />
+    <Compile Include="DAL\IEventRepository.cs" />
+    <Compile Include="DAL\IMeetRepository.cs" />
+    <Compile Include="DAL\IVenueRepository.cs" />
+    <Compile Include="DAL\MeetContext.cs" />
+    <Compile Include="DAL\MeetRepository.cs" />
+    <Compile Include="DAL\EventContext.cs" />
+    <Compile Include="DAL\VenueContext.cs" />
+    <Compile Include="DAL\VenueRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

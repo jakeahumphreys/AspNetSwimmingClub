@@ -6,28 +6,34 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
 
 namespace MVCWebAssignment1.Controllers
 {
     public class VenueController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private VenueRepository _venueRepository;
+
+        public VenueController()
+        {
+            _venueRepository = new VenueRepository(new VenueContext());
+        }
 
         // GET: Venues
         public ActionResult Index()
         {
-            return View(db.Venues.ToList());
+            return View(_venueRepository.GetVenues());
         }
 
         // GET: Venues/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(int id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Venue venue = db.Venues.Find(id);
+            Venue venue = _venueRepository.GetVenueById(id);
             if (venue == null)
             {
                 return HttpNotFound();
@@ -50,8 +56,8 @@ namespace MVCWebAssignment1.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Venues.Add(venue);
-                db.SaveChanges();
+                _venueRepository.InsertVenue(venue);
+                _venueRepository.Save();
                 return RedirectToAction("Index");
             }
 
@@ -59,13 +65,13 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: Venues/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Venue venue = db.Venues.Find(id);
+            Venue venue = _venueRepository.GetVenueById(id);
             if (venue == null)
             {
                 return HttpNotFound();
@@ -82,21 +88,21 @@ namespace MVCWebAssignment1.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(venue).State = EntityState.Modified;
-                db.SaveChanges();
+                _venueRepository.UpdateVenue(venue);
+                _venueRepository.Save();
                 return RedirectToAction("Index");
             }
             return View(venue);
         }
 
         // GET: Venues/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Venue venue = db.Venues.Find(id);
+            Venue venue = _venueRepository.GetVenueById(id);
             if (venue == null)
             {
                 return HttpNotFound();
@@ -109,9 +115,9 @@ namespace MVCWebAssignment1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Venue venue = db.Venues.Find(id);
-            db.Venues.Remove(venue);
-            db.SaveChanges();
+            Venue venue = _venueRepository.GetVenueById(id);
+            _venueRepository.DeleteVenue(venue);
+            _venueRepository.Save();
             return RedirectToAction("Index");
         }
 
@@ -119,7 +125,7 @@ namespace MVCWebAssignment1.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _venueRepository.Dispose();
             }
             base.Dispose(disposing);
         }

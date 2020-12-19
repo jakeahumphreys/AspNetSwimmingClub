@@ -6,22 +6,34 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
 
 namespace MVCWebAssignment1.Controllers
 {
     public class MeetController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        //private ApplicationDbContext db = new ApplicationDbContext();
+
+        private IMeetRepository _meetRepository;
+        private IVenueRepository _venueRepository;
+        private IEventRepository _eventRepository;
+
+        public MeetController()
+        {
+            _meetRepository = new MeetRepository(new MeetContext());
+            _venueRepository = new VenueRepository(new VenueContext());
+            _eventRepository = new EventRepository(new EventContext());
+        }
 
         // GET: Meet
         public ActionResult Index()
         {
-            return View(db.Meets.ToList());
+            return View(_meetRepository.GetMeets());
         }
 
         // GET: Meet/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(int id)
         {
             if (id == null)
             {
@@ -29,7 +41,7 @@ namespace MVCWebAssignment1.Controllers
             }
             MeetViewModel meetViewModel = new MeetViewModel();
 
-            Meet meet = db.Meets.Find(id);
+            Meet meet = _meetRepository.GetMeetById(id);
 
             if (meet == null)
             {
@@ -39,14 +51,14 @@ namespace MVCWebAssignment1.Controllers
             //Get Events for this meet
             List<Event> RelatedEvents = new List<Event>();
             int meetId = meet.Id;
-            foreach(var item in db.Events.ToList())
+            foreach (var item in _eventRepository.GetEvents())
             {
-                if(item.Meet != null)
+                if (item.Meet != null)
                 {
-                    if(db.Meets.Find(item.Meet.Id).Id == meetId)
+                    if (_meetRepository.GetMeetById(item.Meet.Id).Id == meetId)
                     {
                         RelatedEvents.Add(item);
-                    }       
+                    }
                 }
             }
 
@@ -63,7 +75,7 @@ namespace MVCWebAssignment1.Controllers
         {
             MeetViewModel meetViewModel = new MeetViewModel();
 
-            meetViewModel.Venues = db.Venues.ToList();
+            meetViewModel.Venues = _venueRepository.GetVenues();
 
             return View(meetViewModel);
         }
@@ -79,12 +91,12 @@ namespace MVCWebAssignment1.Controllers
             int.TryParse(meetViewModel.VenueId, out venueId); //Convert ID from DropDownList to Integer
 
             //Set ViewModel user's family group to result of a search of family groups by ID
-            meetViewModel.Meet.MeetVenue = db.Venues.Where(x => x.Id == venueId).SingleOrDefault();
+            meetViewModel.Meet.MeetVenue = _venueRepository.GetVenues().Where(x => x.Id == venueId).SingleOrDefault();
 
             if (ModelState.IsValid)
             {
-                db.Meets.Add(meetViewModel.Meet);
-                db.SaveChanges();
+                _meetRepository.InsertMeet(meetViewModel.Meet);
+                _meetRepository.Save();
                 return RedirectToAction("Index");
             }
 
@@ -92,7 +104,7 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: Meet/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int id)
         {
             if (id == null)
             {
@@ -101,14 +113,14 @@ namespace MVCWebAssignment1.Controllers
 
             MeetViewModel meetViewModel = new MeetViewModel();
 
-            Meet meet = db.Meets.Find(id);
+            Meet meet = _meetRepository.GetMeetById(id);
             if (meet == null)
             {
                 return HttpNotFound();
             }
 
             meetViewModel.Meet = meet;
-            meetViewModel.Venues = db.Venues.ToList();
+            meetViewModel.Venues = _venueRepository.GetVenues();
 
             if (meetViewModel.Meet.MeetVenue != null)
             {
@@ -130,31 +142,31 @@ namespace MVCWebAssignment1.Controllers
             int.TryParse(meetViewModel.VenueId, out venueId); //Convert ID from DropDownList to Integer
 
             //Set ViewModel user's family group to result of a search of family groups by ID
-            meetViewModel.Meet.MeetVenue = db.Venues.Where(x => x.Id == venueId).SingleOrDefault();
+            meetViewModel.Meet.MeetVenue = _venueRepository.GetVenues().Where(x => x.Id == venueId).SingleOrDefault();
 
             //load existing meet from database
-            Meet meet = db.Meets.Find(meetViewModel.Meet.Id);
+            Meet meet = _meetRepository.GetMeetById(meetViewModel.Meet.Id);
 
             //Set new properties from model
             meet.MeetVenue = meetViewModel.Meet.MeetVenue;
 
             if (ModelState.IsValid)
             {
-                db.Entry(meet).State = EntityState.Modified;
-                db.SaveChanges();
+                _meetRepository.UpdateMeet(meet);
+                _meetRepository.Save();
                 return RedirectToAction("Index");
             }
             return View(meetViewModel);
         }
 
         // GET: Meet/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Meet meet = db.Meets.Find(id);
+            Meet meet = _meetRepository.GetMeetById(id);
             if (meet == null)
             {
                 return HttpNotFound();
@@ -167,20 +179,20 @@ namespace MVCWebAssignment1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Meet meet = db.Meets.Find(id);
-            foreach(var item in db.Events.ToList())
+            Meet meet = _meetRepository.GetMeetById(id);
+            foreach (var item in _eventRepository.GetEvents())
             {
-                if(item.Meet != null)
+                if (item.Meet != null)
                 {
                     if (item.Meet.Id == id)
                     {
-                        db.Events.Remove(item);
+                        _eventRepository.DeleteEvent(item);
                     }
                 }
-               
+
             }
-            db.Meets.Remove(meet);
-            db.SaveChanges();
+            _meetRepository.DeleteMeet(meet);
+            _meetRepository.Save();
             return RedirectToAction("Index");
         }
 
@@ -188,7 +200,9 @@ namespace MVCWebAssignment1.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _meetRepository.Dispose();
+                _eventRepository.Dispose();
+                _venueRepository.Dispose();
             }
             base.Dispose(disposing);
         }

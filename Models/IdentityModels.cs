@@ -35,9 +35,6 @@ namespace MVCWebAssignment1.Models
     {
 
         public DbSet<FamilyGroup> FamilyGroups { get; set; }
-        public DbSet<Meet> Meets { get; set; }
-        public DbSet<Venue> Venues { get; set; }
-        public DbSet<Event> Events { get; set; }
         public DbSet<Round> Rounds { get; set; }
         public DbSet<Lane> Lanes { get; set; }
         public ApplicationDbContext(): base("DefaultConnection", throwIfV1Schema: false)
