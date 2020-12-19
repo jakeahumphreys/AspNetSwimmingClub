@@ -28,14 +28,19 @@ namespace MVCWebAssignment1.Models
         public bool IsAllowedToSwim { get; set; }
 
         public virtual FamilyGroup FamilyGroup { get; set; }
+        //EF6 Lane Reference
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
 
         public DbSet<FamilyGroup> FamilyGroups { get; set; }
-        public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+        public DbSet<Meet> Meets { get; set; }
+        public DbSet<Venue> Venues { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<Round> Rounds { get; set; }
+        public DbSet<Lane> Lanes { get; set; }
+        public ApplicationDbContext(): base("DefaultConnection", throwIfV1Schema: false)
         {
 
         }
@@ -44,6 +49,5 @@ namespace MVCWebAssignment1.Models
         {
             return new ApplicationDbContext();
         }
-
     }
 }

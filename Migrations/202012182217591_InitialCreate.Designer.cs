@@ -13,7 +13,7 @@ namespace MVCWebAssignment1.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202012170222267_InitialCreate"; }
+            get { return "202012182217591_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

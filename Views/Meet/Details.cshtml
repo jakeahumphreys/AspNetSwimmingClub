@@ -1,0 +1,95 @@
+﻿@model MVCWebAssignment1.Models.MeetViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Meet</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Meet.MeetName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Meet.MeetName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Meet.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Meet.Date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Meet.PoolLength)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Meet.PoolLength)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Meet.MeetVenue.VenueName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Meet.MeetVenue.VenueName)
+        </dd>
+
+    </dl>
+</div>
+<div>
+    <h4>Events</h4>
+    <hr />
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Events[0].Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Events[0].AgeRange)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Events[0].Distance)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Events[0].SwimmingStroke)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.Events)
+        {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AgeRange)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Distance)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SwimmingStroke)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", "Event", new { id = item.Id }, null) |
+            @Html.ActionLink("Details", "Details", "Event", new { id = item.Id }, null) |
+            @Html.ActionLink("Delete", "Delete", "Event", new { id = item.Id }, null)
+        </td>
+    </tr>
+        }
+    </table>
+    @Html.ActionLink("Add event", "Create","Event", new { MeetId = Model.Meet.Id },null)
+
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Meet.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

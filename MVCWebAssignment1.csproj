@@ -168,36 +168,34 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\FamilyGroupController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\MeetController.cs" />
+    <Compile Include="Controllers\VenueController.cs" />
     <Compile Include="Customisations\CustomAuthorize.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202012170222267_InitialCreate.cs" />
-    <Compile Include="Migrations\202012170222267_InitialCreate.Designer.cs">
-      <DependentUpon>202012170222267_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012170228095_Test.cs" />
-    <Compile Include="Migrations\202012170228095_Test.Designer.cs">
-      <DependentUpon>202012170228095_Test.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012170237241_AddFamilyGroups.cs" />
-    <Compile Include="Migrations\202012170237241_AddFamilyGroups.Designer.cs">
-      <DependentUpon>202012170237241_AddFamilyGroups.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012171519077_RemoveIsActive.cs" />
-    <Compile Include="Migrations\202012171519077_RemoveIsActive.Designer.cs">
-      <DependentUpon>202012171519077_RemoveIsActive.cs</DependentUpon>
+    <Compile Include="Migrations\202012182217591_InitialCreate.cs" />
+    <Compile Include="Migrations\202012182217591_InitialCreate.Designer.cs">
+      <DependentUpon>202012182217591_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\EditUserViewModel.cs" />
+    <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\EventViewModel.cs" />
     <Compile Include="Models\FamilyGroup.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Lane.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Meet.cs" />
+    <Compile Include="Models\MeetViewModel.cs" />
+    <Compile Include="Models\Round.cs" />
+    <Compile Include="Models\Venue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -265,6 +263,21 @@
     <Content Include="Views\FamilyGroup\Details.cshtml" />
     <Content Include="Views\FamilyGroup\Create.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
+    <Content Include="Views\Venue\Create.cshtml" />
+    <Content Include="Views\Venue\Delete.cshtml" />
+    <Content Include="Views\Venue\Details.cshtml" />
+    <Content Include="Views\Venue\Edit.cshtml" />
+    <Content Include="Views\Venue\Index.cshtml" />
+    <Content Include="Views\Meet\Create.cshtml" />
+    <Content Include="Views\Meet\Delete.cshtml" />
+    <Content Include="Views\Meet\Details.cshtml" />
+    <Content Include="Views\Meet\Edit.cshtml" />
+    <Content Include="Views\Meet\Index.cshtml" />
+    <Content Include="Views\Event\Create.cshtml" />
+    <Content Include="Views\Event\Delete.cshtml" />
+    <Content Include="Views\Event\Details.cshtml" />
+    <Content Include="Views\Event\Edit.cshtml" />
+    <Content Include="Views\Event\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -283,17 +296,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202012170222267_InitialCreate.resx">
-      <DependentUpon>202012170222267_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012170228095_Test.resx">
-      <DependentUpon>202012170228095_Test.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012170237241_AddFamilyGroups.resx">
-      <DependentUpon>202012170237241_AddFamilyGroups.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012171519077_RemoveIsActive.resx">
-      <DependentUpon>202012171519077_RemoveIsActive.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202012182217591_InitialCreate.resx">
+      <DependentUpon>202012182217591_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

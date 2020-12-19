@@ -1,0 +1,51 @@
+﻿@model MVCWebAssignment1.Models.Event
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Event</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.AgeRange)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AgeRange)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Gender)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Gender)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Distance)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Distance)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SwimmingStroke)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SwimmingStroke)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", "Event", new { id = Model.Meet.Id }, null)
+
+    @Html.ActionLink("Back to List", "Details", "Meet", new { id = Model.Meet.Id }, null)
+</p>
