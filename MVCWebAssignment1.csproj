@@ -171,39 +171,74 @@
     <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\FamilyGroupController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LaneController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\MeetController.cs" />
+    <Compile Include="Controllers\RoundController.cs" />
     <Compile Include="Controllers\VenueController.cs" />
     <Compile Include="Customisations\CustomAuthorize.cs" />
     <Compile Include="DAL\EventRepository.cs" />
+    <Compile Include="DAL\FamilyGroupContext.cs" />
+    <Compile Include="DAL\FamilyGroupRepository.cs" />
     <Compile Include="DAL\IEventRepository.cs" />
+    <Compile Include="DAL\IFamilyGroupRepository.cs" />
+    <Compile Include="DAL\ILaneRepository.cs" />
+    <Compile Include="DAL\IRoundRepository.cs" />
     <Compile Include="DAL\IMeetRepository.cs" />
     <Compile Include="DAL\IVenueRepository.cs" />
+    <Compile Include="DAL\LaneContext.cs" />
+    <Compile Include="DAL\LaneRepository.cs" />
     <Compile Include="DAL\MeetContext.cs" />
     <Compile Include="DAL\MeetRepository.cs" />
     <Compile Include="DAL\EventContext.cs" />
+    <Compile Include="DAL\MigrationContext.cs" />
+    <Compile Include="DAL\RoundContext.cs" />
+    <Compile Include="DAL\RoundRepository.cs" />
     <Compile Include="DAL\VenueContext.cs" />
     <Compile Include="DAL\VenueRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202012182217591_InitialCreate.cs" />
-    <Compile Include="Migrations\202012182217591_InitialCreate.Designer.cs">
-      <DependentUpon>202012182217591_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\MigrationContext\202012191545006_InitialCreate.cs" />
+    <Compile Include="Migrations\MigrationContext\202012191545006_InitialCreate.Designer.cs">
+      <DependentUpon>202012191545006_InitialCreate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Migrations\MigrationContext\202012191554252_Test.cs" />
+    <Compile Include="Migrations\MigrationContext\202012191554252_Test.Designer.cs">
+      <DependentUpon>202012191554252_Test.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\MigrationContext\202012191925063_LaneRoundModelCorrections.cs" />
+    <Compile Include="Migrations\MigrationContext\202012191925063_LaneRoundModelCorrections.Designer.cs">
+      <DependentUpon>202012191925063_LaneRoundModelCorrections.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\MigrationContext\202012192029010_AddRoundNumber.cs" />
+    <Compile Include="Migrations\MigrationContext\202012192029010_AddRoundNumber.Designer.cs">
+      <DependentUpon>202012192029010_AddRoundNumber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\MigrationContext\202012192100129_AddLaneNumber.cs" />
+    <Compile Include="Migrations\MigrationContext\202012192100129_AddLaneNumber.Designer.cs">
+      <DependentUpon>202012192100129_AddLaneNumber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\MigrationContext\202012192221250_AddSwimmerId.cs" />
+    <Compile Include="Migrations\MigrationContext\202012192221250_AddSwimmerId.Designer.cs">
+      <DependentUpon>202012192221250_AddSwimmerId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\MigrationContext\ConfigurationMigrationContext.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\EditUserViewModel.cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\EventViewModel.cs" />
     <Compile Include="Models\FamilyGroup.cs" />
+    <Compile Include="Models\FamilyGroupViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Lane.cs" />
+    <Compile Include="Models\LaneViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Meet.cs" />
     <Compile Include="Models\MeetViewModel.cs" />
     <Compile Include="Models\Round.cs" />
+    <Compile Include="Models\RoundViewModel.cs" />
     <Compile Include="Models\Venue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -287,6 +322,9 @@
     <Content Include="Views\Event\Details.cshtml" />
     <Content Include="Views\Event\Edit.cshtml" />
     <Content Include="Views\Event\Index.cshtml" />
+    <Content Include="Views\Round\Delete.cshtml" />
+    <Content Include="Views\Lane\Create.cshtml" />
+    <Content Include="Views\Round\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -305,8 +343,23 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202012182217591_InitialCreate.resx">
-      <DependentUpon>202012182217591_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\MigrationContext\202012191545006_InitialCreate.resx">
+      <DependentUpon>202012191545006_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\MigrationContext\202012191554252_Test.resx">
+      <DependentUpon>202012191554252_Test.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\MigrationContext\202012191925063_LaneRoundModelCorrections.resx">
+      <DependentUpon>202012191925063_LaneRoundModelCorrections.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\MigrationContext\202012192029010_AddRoundNumber.resx">
+      <DependentUpon>202012192029010_AddRoundNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\MigrationContext\202012192100129_AddLaneNumber.resx">
+      <DependentUpon>202012192100129_AddLaneNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\MigrationContext\202012192221250_AddSwimmerId.resx">
+      <DependentUpon>202012192221250_AddSwimmerId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

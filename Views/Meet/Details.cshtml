@@ -4,20 +4,13 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<h2>@Model.Meet.MeetName</h2>
+
+
 
 <div>
-    <h4>Meet</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Meet.MeetName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Meet.MeetName)
-        </dd>
-
         <dt>
             @Html.DisplayNameFor(model => model.Meet.Date)
         </dt>
@@ -34,18 +27,19 @@
             @Html.DisplayFor(model => model.Meet.PoolLength)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Meet.MeetVenue.VenueName)
+            @Html.DisplayNameFor(model => model.Meet.Venue.VenueName)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Meet.MeetVenue.VenueName)
+            @Html.DisplayFor(model => model.Meet.Venue.VenueName)
         </dd>
 
     </dl>
 </div>
 <div>
-    <h4>Events</h4>
     <hr />
+
+    <h4>Events</h4>
     <table class="table">
         <tr>
             <th>
@@ -60,36 +54,34 @@
             <th>
                 @Html.DisplayNameFor(model => model.Events[0].SwimmingStroke)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayName("Actions")
+            </th>
         </tr>
 
         @foreach (var item in Model.Events)
         {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Id)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AgeRange)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Distance)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SwimmingStroke)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", "Event", new { id = item.Id }, null) |
-            @Html.ActionLink("Details", "Details", "Event", new { id = item.Id }, null) |
-            @Html.ActionLink("Delete", "Delete", "Event", new { id = item.Id }, null)
-        </td>
-    </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AgeRange)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Distance)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SwimmingStroke)
+                </td>
+                <td>
+                    <button class="btn btn-primary" onclick="location.href='@Url.Action("Details","Event", new { id = item.Id })';return false;">Event Details</button>
+                    <button class="btn btn-danger" onclick="location.href='@Url.Action("Delete","Event",new { id = item.Id })';return false;">Delete Event</button>
+                </td>
+            </tr>
         }
     </table>
-    @Html.ActionLink("Add event", "Create","Event", new { MeetId = Model.Meet.Id },null)
-
+    <button class="btn btn-primary glyphicon glyphicon-list" data-toggle="tooltip" title="Edit @Model.Meet.MeetName" onclick="location.href='@Url.Action("Index")';return false;"></button>
+    <button class="btn btn-primary glyphicon glyphicon-cog" data-toggle="tooltip" title="Edit @Model.Meet.MeetName" onclick="location.href='@Url.Action("Edit", new {id = Model.Meet.Id })';return false;"></button>
+    <button class="btn btn-success glyphicon glyphicon-plus" data-toggle="tooltip" title="Add new Event" onclick="location.href='@Url.Action("Create", "Event", new {MeetId = Model.Meet.Id })';return false;"></button>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Meet.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>

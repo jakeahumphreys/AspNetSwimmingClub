@@ -10,7 +10,8 @@ namespace MVCWebAssignment1.DAL
 {
     public class VenueContext : IdentityDbContext<ApplicationUser>
     {
-        public VenueContext() : base("DefaultConnection") { }
+        public VenueContext() : base("DefaultConnection") {
+        }
         public DbSet<Venue> Venues { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

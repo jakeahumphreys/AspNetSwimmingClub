@@ -24,6 +24,7 @@
                             <li>@Html.ActionLink("Register New User", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
                             <li>@Html.ActionLink("Manage Family Groups", "Index", "FamilyGroup", routeValues: null, htmlAttributes: new { id = "familyLink" })</li>
                             <li>@Html.ActionLink("Manage User Accounts", "Index", "Account", routeValues: null, htmlAttributes: new { id = "accountLink" })</li>
+                            <li>@Html.ActionLink("Manage Meets", "Index", "Meet", routeValues: null, htmlAttributes: new { id = "meetLink" })</li>
                             <li>@Html.ActionLink("Manage Venues", "Index", "Venue", routeValues: null, htmlAttributes: new { id = "venueLink" })</li>
                         </LoggedInTemplate>
                     </asp:LoginView>
@@ -37,7 +38,6 @@
 else
 {
 <ul class="nav navbar-nav navbar-right">
-    <li>@Html.ActionLink("Register New User", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
     <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
 </ul>
 }

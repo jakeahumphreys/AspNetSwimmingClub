@@ -15,11 +15,13 @@ namespace MVCWebAssignment1.Controllers
     {
         private EventRepository _eventRepository;
         private MeetRepository _meetRepository;
+        private RoundRepository _roundRepository;
 
         public EventController()
         {
             _eventRepository = new EventRepository(new EventContext());
             _meetRepository = new MeetRepository(new MeetContext());
+            _roundRepository = new RoundRepository(new RoundContext());
         }
         // GET: Event
         public ActionResult Index()
@@ -27,22 +29,41 @@ namespace MVCWebAssignment1.Controllers
             return View(_eventRepository.GetEvents());
         }
 
-        // GET: Event/Details/5
         public ActionResult Details(int id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            
+            EventViewModel eventViewModel = new EventViewModel();
+
             Event @event = _eventRepository.GetEventById(id);
-            ViewBag.MeetId = @event.Meet.Id;
 
             if (@event == null)
             {
                 return HttpNotFound();
             }
-            return View(@event);
+
+            //Get Rounds for this event
+            List<Round> RelatedRounds = new List<Round>();
+            int EventId = @event.Id;
+            foreach (var round in _roundRepository.GetRounds())
+            {
+                if (round.EventId != 0)
+                {
+                    if (round.EventId == EventId)
+                    {
+                        RelatedRounds.Add(round);
+                    }
+                }
+            }
+
+            //Add components to ViewModel
+            eventViewModel.Event = @event;
+            eventViewModel.Rounds = RelatedRounds;
+
+            //Return View
+            return View(eventViewModel);
         }
 
         // GET: Event/Create
@@ -65,15 +86,11 @@ namespace MVCWebAssignment1.Controllers
             {
                 if(eventViewModel.MeetId > 0)
                 {
-                    Meet meet = _meetRepository.GetMeetById(eventViewModel.MeetId);
-                    if(meet != null)
-                    {
-                        eventViewModel.Event.Meet = meet;
-                    }
+                    eventViewModel.Event.MeetId = eventViewModel.MeetId;
                 }
                 _eventRepository.InsertEvent(eventViewModel.Event);
                 _eventRepository.Save();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Meet", new {@id = eventViewModel.MeetId});
             }
 
             return View(eventViewModel);
@@ -99,11 +116,18 @@ namespace MVCWebAssignment1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,AgeRange,Gender,Distance,SwimmingStroke")] Event @event)
+        public ActionResult Edit(Event @event)
         {
+            Event eventToUpdate = _eventRepository.GetEventById(@event.Id);
+
+            eventToUpdate.AgeRange = @event.AgeRange;
+            eventToUpdate.Distance = @event.Distance;
+            eventToUpdate.Gender = @event.Gender;
+            eventToUpdate.SwimmingStroke = @event.SwimmingStroke;
+
             if (ModelState.IsValid)
             {
-                _eventRepository.UpdateEvent(@event);
+                _eventRepository.UpdateEvent(eventToUpdate);
                 _eventRepository.Save();
                 return RedirectToAction("Index");
             }
@@ -130,10 +154,12 @@ namespace MVCWebAssignment1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+ 
             Event @event = _eventRepository.GetEventById(id);
+            var meetId = @event.MeetId;
             _eventRepository.DeleteEvent(@event);
             _eventRepository.Save();
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", "Meet", new { @id = meetId });
         }
 
         protected override void Dispose(bool disposing)

@@ -1,4 +1,4 @@
-﻿@model MVCWebAssignment1.Models.Event
+﻿@model MVCWebAssignment1.Models.EventViewModel
 
 @{
     ViewBag.Title = "Details";
@@ -11,41 +11,74 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.AgeRange)
+            @Html.DisplayNameFor(model => model.Event.AgeRange)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.AgeRange)
+            @Html.DisplayFor(model => model.Event.AgeRange)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Gender)
+            @Html.DisplayNameFor(model => model.Event.Gender)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Gender)
+            @Html.DisplayFor(model => model.Event.Gender)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Distance)
+            @Html.DisplayNameFor(model => model.Event.Distance)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Distance)
+            @Html.DisplayFor(model => model.Event.Distance)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.SwimmingStroke)
+            @Html.DisplayNameFor(model => model.Event.SwimmingStroke)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.SwimmingStroke)
+            @Html.DisplayFor(model => model.Event.SwimmingStroke)
         </dd>
 
     </dl>
 </div>
+<div>
+    <h4>Rounds</h4>
+    <hr />
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Rounds[0].RoundNumber)
+            </th>
+            <th>
+                @Html.DisplayName("Number of lanes")
+            </th>
+            <th>
+                @Html.DisplayName("Actions")
+            </th>
+        </tr>
+        @foreach (var item in Model.Rounds)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoundNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Lanes.Count)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", "Round", new { id = item.Id }, null) |
+                    @Html.ActionLink("Delete", "Delete", "Round", new { id = item.Id }, null)
+                </td>
+            </tr>
+        }
+    </table>
+    <button class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Round",new {EventId = Model.Event.Id})';return false;">Add Round</button>
+</div>
 <p>
-    @Html.ActionLink("Edit", "Edit", "Event", new { id = Model.Meet.Id }, null)
+    @Html.ActionLink("Edit", "Edit", "Event", new { id = Model.MeetId }, null)
 
-    @Html.ActionLink("Back to List", "Details", "Meet", new { id = Model.Meet.Id }, null)
+    @Html.ActionLink("Back to List", "Details", "Meet", new { id = Model.MeetId }, null)
 </p>

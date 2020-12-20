@@ -27,7 +27,7 @@ namespace MVCWebAssignment1.Models
         public string DateOfBirth { get; set; }
         public bool IsAllowedToSwim { get; set; }
 
-        public virtual FamilyGroup FamilyGroup { get; set; }
+        public FamilyGroup FamilyGroup { get; set; }
         //EF6 Lane Reference
     }
 
@@ -39,12 +39,13 @@ namespace MVCWebAssignment1.Models
         public DbSet<Lane> Lanes { get; set; }
         public ApplicationDbContext(): base("DefaultConnection", throwIfV1Schema: false)
         {
-
         }
 
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<MVCWebAssignment1.Models.Event> Events { get; set; }
     }
 }

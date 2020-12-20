@@ -14,6 +14,7 @@ namespace MVCWebAssignment1.DAL
         public VenueRepository(VenueContext context)
         {
             _context = context;
+            _context.Configuration.ValidateOnSaveEnabled = false;
         }
         public IList<Venue> GetVenues()
         {

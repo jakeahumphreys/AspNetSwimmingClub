@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,18 @@ namespace MVCWebAssignment1.Controllers
 {
     public class FamilyGroupController : Controller
     {
-        private ApplicationDbContext _context;
+        private FamilyGroupRepository _familyGroupRepository;
+        private ApplicationDbContext _applicationUserContext;
         // GET: FamilyGroup
 
         public FamilyGroupController()
         {
-            _context = new ApplicationDbContext();
+            _familyGroupRepository = new FamilyGroupRepository(new FamilyGroupContext());
+            _applicationUserContext = new ApplicationDbContext();
         }
         public ActionResult Index()
         {
-            return View(_context.FamilyGroups.ToList());
+            return View(_familyGroupRepository.GetFamilyGroups());
         }
 
         public ActionResult Create()
@@ -36,13 +39,36 @@ namespace MVCWebAssignment1.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            FamilyGroup familyGroup = _context.FamilyGroups.Find(id);
 
-            if (familyGroup == null)
+            //Create View Model
+            FamilyGroupViewModel familyGroupViewModel = new FamilyGroupViewModel();
+
+            //Add object of family group to view model
+            familyGroupViewModel.FamilyGroup = _familyGroupRepository.GetFamilyGroupById(id);
+            var groupId = familyGroupViewModel.FamilyGroup.FamilyGroupId;
+
+            if (familyGroupViewModel.FamilyGroup == null)
             {
                 return HttpNotFound();
             }
-            return View(familyGroup);
+
+            IList<ApplicationUser> familyGroupMembers = new List<ApplicationUser>();
+
+            //Add list of familygroup members to model
+            foreach( var user in _applicationUserContext.Users.ToList())
+            {
+                if(user.FamilyGroup != null)
+                {
+                    if (user.FamilyGroup.FamilyGroupId == groupId)
+                    {
+                        familyGroupMembers.Add(user);
+                    }
+                }    
+            }
+
+            familyGroupViewModel.FamilyGroupMembers = familyGroupMembers;
+
+            return View(familyGroupViewModel);
         }
 
         [HttpPost]
@@ -52,8 +78,8 @@ namespace MVCWebAssignment1.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.FamilyGroups.Add(familygroup);
-                _context.SaveChanges();
+                _familyGroupRepository.InsertFamilyGroup(familygroup);
+                _familyGroupRepository.Save();
                 return RedirectToAction("Index");
             }
             return View(familygroup);
@@ -63,7 +89,7 @@ namespace MVCWebAssignment1.Controllers
         {
             if (disposing)
             {
-                _context.Dispose();
+                _familyGroupRepository.Dispose();
             }
             base.Dispose(disposing);
         }

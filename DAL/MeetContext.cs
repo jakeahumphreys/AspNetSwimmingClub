@@ -10,7 +10,8 @@ namespace MVCWebAssignment1.DAL
 {
     public class MeetContext : IdentityDbContext<ApplicationUser>
     {
-        public MeetContext(): base("DefaultConnection"){}
+        public MeetContext(): base("DefaultConnection"){
+        }
         public DbSet<Meet> Meets { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

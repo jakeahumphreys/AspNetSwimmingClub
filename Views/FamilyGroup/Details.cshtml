@@ -1,35 +1,37 @@
-﻿@model MVCWebAssignment1.Models.FamilyGroup
+﻿@model MVCWebAssignment1.Models.FamilyGroupViewModel
 
 @{
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<h2>@Model.FamilyGroup.GroupName</h2>
 
 <div>
-    <h4>FamilyGroup</h4>
+    <h4>Group Members</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.GroupName)
-        </dt>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FamilyGroupMembers[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FamilyGroupMembers[0].Email)
+            </th>
+        </tr>
 
-        <dd>
-            @Html.DisplayFor(model => model.GroupName)
-        </dd>
-        <ul>
-            @foreach (var item in Model.ApplicationUser)
-            {
-            <li>
-                @Html.ActionLink(item.Name, "Details", "Account", new { id = item.Id},null)
-            </li>
-            }
-        </ul>
-       
-
-    </dl>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.FamilyGroupId }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+        @foreach (var item in Model.FamilyGroupMembers)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+            </tr>
+        }
+    </table>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.FamilyGroup.FamilyGroupId }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>

@@ -17,12 +17,12 @@ namespace MVCWebAssignment1.DAL
         }
         public IList<Meet> GetMeets()
         {
-            return _context.Meets.ToList();
+            return _context.Meets.Include(x => x.Venue).Include(x => x.Events).ToList();
         }
 
         public Meet GetMeetById(int id)
         {
-            return _context.Meets.Find(id);
+            return _context.Meets.Where(x => x.Id == id).Include(x => x.Venue).Include(x => x.Events).SingleOrDefault();
         }
 
         public void InsertMeet(Meet meet)

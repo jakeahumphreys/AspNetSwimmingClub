@@ -9,5 +9,6 @@ namespace MVCWebAssignment1.Models
     {
         public int MeetId { get; set; }
         public Event Event { get; set; }
+        public IList<Round> Rounds { get; set; }
     }
 }

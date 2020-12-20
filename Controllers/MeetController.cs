@@ -50,15 +50,15 @@ namespace MVCWebAssignment1.Controllers
 
             //Get Events for this meet
             List<Event> RelatedEvents = new List<Event>();
-            int meetId = meet.Id;
-            foreach (var item in _eventRepository.GetEvents())
+            foreach (var @event in _eventRepository.GetEvents())
             {
-                if (item.Meet != null)
+                if (@event.MeetId != 0)
                 {
-                    if (_meetRepository.GetMeetById(item.Meet.Id).Id == meetId)
+                    if(@event.MeetId == meet.Id)
                     {
-                        RelatedEvents.Add(item);
+                        RelatedEvents.Add(@event);
                     }
+                    
                 }
             }
 
@@ -80,9 +80,7 @@ namespace MVCWebAssignment1.Controllers
             return View(meetViewModel);
         }
 
-        // POST: Meet/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(MeetViewModel meetViewModel)
@@ -91,7 +89,8 @@ namespace MVCWebAssignment1.Controllers
             int.TryParse(meetViewModel.VenueId, out venueId); //Convert ID from DropDownList to Integer
 
             //Set ViewModel user's family group to result of a search of family groups by ID
-            meetViewModel.Meet.MeetVenue = _venueRepository.GetVenues().Where(x => x.Id == venueId).SingleOrDefault();
+            //meetViewModel.Meet.Venue = _venueRepository.GetVenues().Where(x => x.Id == venueId).SingleOrDefault();
+            meetViewModel.Meet.VenueId = venueId;
 
             if (ModelState.IsValid)
             {
@@ -114,6 +113,7 @@ namespace MVCWebAssignment1.Controllers
             MeetViewModel meetViewModel = new MeetViewModel();
 
             Meet meet = _meetRepository.GetMeetById(id);
+
             if (meet == null)
             {
                 return HttpNotFound();
@@ -122,9 +122,9 @@ namespace MVCWebAssignment1.Controllers
             meetViewModel.Meet = meet;
             meetViewModel.Venues = _venueRepository.GetVenues();
 
-            if (meetViewModel.Meet.MeetVenue != null)
+            if (meetViewModel.Meet.VenueId != 0)
             {
-                meetViewModel.VenueId = meetViewModel.Meet.MeetVenue.Id.ToString();
+                meetViewModel.VenueId = meetViewModel.Meet.VenueId.ToString();
             }
 
 
@@ -142,13 +142,18 @@ namespace MVCWebAssignment1.Controllers
             int.TryParse(meetViewModel.VenueId, out venueId); //Convert ID from DropDownList to Integer
 
             //Set ViewModel user's family group to result of a search of family groups by ID
-            meetViewModel.Meet.MeetVenue = _venueRepository.GetVenues().Where(x => x.Id == venueId).SingleOrDefault();
+            //meetViewModel.Meet.Venue = _venueRepository.GetVenues().Where(x => x.Id == venueId).SingleOrDefault();
+            meetViewModel.Meet.VenueId = venueId;
+
 
             //load existing meet from database
             Meet meet = _meetRepository.GetMeetById(meetViewModel.Meet.Id);
 
             //Set new properties from model
-            meet.MeetVenue = meetViewModel.Meet.MeetVenue;
+            meet.VenueId= meetViewModel.Meet.VenueId;
+            meet.MeetName = meetViewModel.Meet.MeetName;
+            meet.Date = meetViewModel.Meet.Date;
+            meet.PoolLength = meetViewModel.Meet.PoolLength;
 
             if (ModelState.IsValid)
             {

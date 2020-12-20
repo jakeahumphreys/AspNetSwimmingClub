@@ -10,7 +10,8 @@ namespace MVCWebAssignment1.DAL
 {
     public class EventContext : IdentityDbContext<ApplicationUser>
     {
-        public EventContext() : base("DefaultConnection") { }
+        public EventContext() : base("DefaultConnection") {
+        }
         public DbSet<Event> Events { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

@@ -14,9 +14,10 @@ namespace MVCWebAssignment1.Models
         public string Date { get; set; }
         [Display(Name = "Pool Length (Metres)")]
         public string PoolLength { get; set; }
+        public int VenueId { get; set; }
         [Display(Name = "Venue")]
-        public virtual Venue MeetVenue { get; set; }
-        public virtual ICollection<Event> Events { get; set; }
+        public Venue Venue { get; set; }
+        public ICollection<Event> Events { get; set; }
         
     }
 }
