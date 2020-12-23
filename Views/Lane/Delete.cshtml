@@ -1,0 +1,24 @@
+﻿@model MVCWebAssignment1.Models.Lane
+
+@{
+    ViewBag.Title = "Delete Lane";
+}
+
+<h2>Delete Lane</h2>
+
+<h3>Are you sure you want to delete this lane?</h3>
+<div>
+    <dl class="dl-horizontal">
+        <h3>Deleting this lane will reorder the other lanes.</h3>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

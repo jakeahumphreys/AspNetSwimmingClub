@@ -26,6 +26,43 @@ namespace MVCWebAssignment1.Controllers
             return View(_laneRepository.GetLanes());
         }
 
+        // GET: Event/Edit/5
+        public ActionResult Edit(int id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Lane lane = _laneRepository.GetLaneById(id);
+
+            if (lane == null)
+            {
+                return HttpNotFound();
+            }
+            return View(lane);
+        }
+
+        // POST: Event/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Lane lane)
+        {
+            Lane laneToUpdate = _laneRepository.GetLaneById(lane.Id);
+
+            laneToUpdate.FinishTime = lane.FinishTime;
+            laneToUpdate.LaneComment = lane.LaneComment;
+
+            if (ModelState.IsValid)
+            {
+                _laneRepository.UpdateLane(laneToUpdate);
+                _laneRepository.Save();
+                return RedirectToAction("Details", "Round", new { @id = laneToUpdate.RoundId });
+            }
+            return View(lane);
+        }
+
         public ActionResult Create(int RoundId)
         {
             LaneViewModel laneViewModel = new LaneViewModel();
@@ -48,7 +85,7 @@ namespace MVCWebAssignment1.Controllers
                 laneViewModel.Lane.SwimmerId = laneViewModel.UserId;
                 _laneRepository.InsertLane(laneViewModel.Lane);
                 _laneRepository.Save();
-                return RedirectToAction("Details", "Meet", new { @id = laneViewModel.RoundId});
+                return RedirectToAction("Details", "Round", new { @id = laneViewModel.RoundId});
             }
 
             return View(laneViewModel);
@@ -77,6 +114,7 @@ namespace MVCWebAssignment1.Controllers
 
             _laneRepository.DeleteLane(lane);
             _laneRepository.Save();
+
             var counter = 0;
             foreach (var laneItem in _laneRepository.GetLanes().Where(x => x.RoundId == RoundId))
             {
@@ -88,34 +126,7 @@ namespace MVCWebAssignment1.Controllers
                     _laneRepository.Save();
                 }
             }
-            return RedirectToAction("Details", "Event", new { @id = RoundId });
+            return RedirectToAction("Details", "Round", new { @id = RoundId });
         }
-
-        //// GET: Event/Create
-        //public ActionResult Create(int RoundId)
-        //{
-        //    LaneViewModel laneViewModel = new LaneViewModel();
-        //    laneViewModel.RoundId = RoundId;
-        //    ViewBag.RoundId = RoundId;
-        //    return View(laneViewModel);
-        //}
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create(LaneViewModel laneViewModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        if (laneViewModel.RoundId > 0)
-        //        {
-        //            laneViewModel.Lane.RoundId = laneViewModel.RoundId;
-        //        }
-        //        _laneRepository.InsertLane(laneViewModel.Lane);
-        //        _laneRepository.Save();
-        //        return RedirectToAction("Details", "Event", new { @id = laneViewModel.RoundId });
-        //    }
-
-        //    return View(roundViewModel);
-        //}
     }
 }

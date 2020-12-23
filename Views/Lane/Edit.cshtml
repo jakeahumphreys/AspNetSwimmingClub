@@ -1,0 +1,43 @@
+﻿@model MVCWebAssignment1.Models.Lane
+
+@{
+    ViewBag.Title = "Edit Lane";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Edit Lane</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FinishTime, htmlAttributes: new { @class = "control-label col-md-2" });
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FinishTime, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FinishTime, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.LaneComment, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.LaneComment, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.LaneComment, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<hr />
+<button class="btn btn-primary glyphicon glyphicon-circle-arrow-left" data-toggle="tooltip" title="Back to round" onclick="location.href='@Url.Action("Details", "Round", new { id = Model.RoundId })';return false;"></button>
+

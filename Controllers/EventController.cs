@@ -129,7 +129,7 @@ namespace MVCWebAssignment1.Controllers
             {
                 _eventRepository.UpdateEvent(eventToUpdate);
                 _eventRepository.Save();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Event", new { @id = eventToUpdate.Id});
             }
             return View(@event);
         }

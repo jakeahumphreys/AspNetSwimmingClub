@@ -46,6 +46,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -178,6 +179,7 @@
     <Compile Include="Controllers\RoundController.cs" />
     <Compile Include="Controllers\VenueController.cs" />
     <Compile Include="Customisations\CustomAuthorize.cs" />
+    <Compile Include="Customisations\ErrorType.cs" />
     <Compile Include="DAL\EventRepository.cs" />
     <Compile Include="DAL\FamilyGroupContext.cs" />
     <Compile Include="DAL\FamilyGroupRepository.cs" />
@@ -231,6 +233,7 @@
     <Compile Include="Models\EventViewModel.cs" />
     <Compile Include="Models\FamilyGroup.cs" />
     <Compile Include="Models\FamilyGroupViewModel.cs" />
+    <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Lane.cs" />
     <Compile Include="Models\LaneViewModel.cs" />
@@ -325,6 +328,9 @@
     <Content Include="Views\Round\Delete.cshtml" />
     <Content Include="Views\Lane\Create.cshtml" />
     <Content Include="Views\Round\Details.cshtml" />
+    <Content Include="Views\Lane\Edit.cshtml" />
+    <Content Include="Views\Lane\Delete.cshtml" />
+    <Content Include="Views\Error\Error.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

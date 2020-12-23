@@ -69,16 +69,14 @@
                     @Html.DisplayFor(modelItem => item.Lanes.Count)
                 </td>
                 <td>
-                    @Html.ActionLink("Details", "Details", "Round", new { id = item.Id }, null) |
-                    @Html.ActionLink("Delete", "Delete", "Round", new { id = item.Id }, null)
+                    <button class="btn btn-primary" onclick="location.href='@Url.Action("Details", "Round",new { id = item.Id })';return false;">Round Details</button>
+                    <button class="btn btn-danger" onclick="location.href='@Url.Action("Delete","Round",new { id = item.Id })';return false;">Delete</button>
                 </td>
             </tr>
         }
     </table>
-    <button class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Round",new {EventId = Model.Event.Id})';return false;">Add Round</button>
+    <hr/>
+    <button class="btn btn-primary glyphicon glyphicon-circle-arrow-left" data-toggle="tooltip" title="Back to Meet" onclick="location.href='@Url.Action("Details", "Meet", new {id = Model.Event.MeetId})';return false;"></button>
+    <button class="btn btn-primary glyphicon glyphicon-cog" data-toggle="tooltip" title="Edit Event" onclick="location.href='@Url.Action("Edit","Event", new {id = Model.Event.Id })';return false;"></button>
+    <button class="btn btn-success glyphicon glyphicon-plus" data-toggle="tooltip" title="Add new Event" onclick="location.href='@Url.Action("Create", "Round", new {EventId = Model.Event.Id })';return false;"></button>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", "Event", new { id = Model.MeetId }, null)
-
-    @Html.ActionLink("Back to List", "Details", "Meet", new { id = Model.MeetId }, null)
-</p>

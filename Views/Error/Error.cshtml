@@ -1,0 +1,16 @@
+﻿@using MVCWebAssignment1.Customisations
+
+@{
+    ViewBag.Title = "An error has occured.";
+}
+
+<h3>An Error has occured.</h3>
+
+@if (ViewBag.ErrorType == ErrorType.NoFamily)
+{
+    <div class="alert-danger">
+        <p>You're not currently part of a family group. Please contact a club official.</p>
+        <asp:button class="btn-primary" id="backButton" runat="server" text="Back" OnClientClick="JavaScript:window.history.back(1);return false;"></asp:button>
+    </div>
+}
+

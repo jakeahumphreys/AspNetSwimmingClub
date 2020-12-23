@@ -6,40 +6,60 @@
 
 <h2>Swimming Meets</h2>
 
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.MeetName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PoolLength)
-        </th>
-        <th>
-            @Html.DisplayName("Actions")
-        </th>
-    </tr>
-
-    @foreach (var item in Model)
+<div>
+    <h4>Filters</h4>
+    @using (Html.BeginForm())
     {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.MeetName)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Date)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.PoolLength)
-    </td>
-    <td>
-        <button class="btn btn-primary" onclick="location.href='@Url.Action("Details",new { id = item.Id })';return false;">Details</button>
-        <button class="btn btn-danger" onclick="location.href='@Url.Action("Delete",new { id = item.Id })';return false;">Delete</button>
-    </td>
-</tr>
-}
-</table>
-<button class="btn btn-success" onclick="location.href='@Url.Action("Create")';return false;">New Meet</button>
+        <p>
+            Start Date (dd/mm/yyyy) :@Html.TextBox("searchParamDateLower")
+            End Date(dd/mm/yyyy) :@Html.TextBox("searchParamDateUpper")
+            <input type="submit" value="Search" />
+        </p>
+    }
+</div>
+<div>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MeetName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PoolLength)
+            </th>
+            <th>
+                @Html.DisplayName("Actions")
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MeetName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PoolLength)
+                </td>
+                <td>
+                    <button class="btn btn-primary" onclick="location.href='@Url.Action("Details",new { id = item.Id })';return false;">Details</button>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <button class="btn btn-danger" onclick="location.href='@Url.Action("Delete",new { id = item.Id })';return false;">Delete</button>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    @if (User.IsInRole("Admin"))
+    {
+        <button class="btn btn-success" onclick="location.href='@Url.Action("Create")';return false;">New Meet</button>
+    }
+</div>
+
 

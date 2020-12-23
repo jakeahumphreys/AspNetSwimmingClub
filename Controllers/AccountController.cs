@@ -60,28 +60,75 @@ namespace MVCWebAssignment1.Controllers
             }
         }
         [CustomAuthorize(Roles = "Parent,Admin")]
-        public ActionResult Index()
+        public ActionResult Index(string searchParamName, int? searchParamAge)
         {
+            List<ApplicationUser> memberList = new List<ApplicationUser>();
+
             if (UserManager.IsInRole(User.Identity.GetUserId(), "Parent"))
             {
-                var parentGroupId = _context.Users.Find(User.Identity.GetUserId()).FamilyGroup.FamilyGroupId;
-                List<ApplicationUser> memberList = new List<ApplicationUser>();
+                //var parentGroupId = _context.Users.Find(User.Identity.GetUserId()).FamilyGroup.FamilyGroupId;
+                string currentUserId = User.Identity.GetUserId();
+                ApplicationUser parent = _context.Users.Where(x => x.Id == currentUserId).SingleOrDefault();
 
-                foreach(var user in _context.Users.ToList())
+                if(parent.FamilyGroup != null)
                 {
-                    if(user.FamilyGroup.FamilyGroupId == parentGroupId)
-                    {
-                        if(!UserManager.IsInRole(user.Id, "Parent"))
-                        {
-                            memberList.Add(user);
-                        }
-                    };
-                    Debug.WriteLine(memberList.Count());
-                }
-                return View(memberList);
+                    var parentGroupId = parent.FamilyGroup.FamilyGroupId;
 
+                    foreach (var user in _context.Users.ToList())
+                    {
+                        if (user.FamilyGroup.FamilyGroupId == parentGroupId)
+                        {
+                            if (!UserManager.IsInRole(user.Id, "Parent"))
+                            {
+                                memberList.Add(user);
+                            }
+                        };
+                    }
+                    return View(applyFilters(memberList, searchParamName, searchParamAge));
+                }
+                else
+                {
+                    return RedirectToAction("Error", "Error", new { @errorType = ErrorType.NoFamily});
+                }
             }
-            return View(_context.Users.ToList());
+
+            memberList = _context.Users.ToList();
+
+
+            return View(applyFilters(memberList, searchParamName,searchParamAge));
+        }
+
+        private List<ApplicationUser> applyFilters(List<ApplicationUser> memberList, string searchParamName, int? searchParamAge)
+        {
+            if(!String.IsNullOrEmpty(searchParamName))
+            {
+                //events = events.Where(x => x.Meet.Venue.VenueName.Contains(searchParamVenue)).ToList();
+                memberList = memberList.Where(x => x.Name.IndexOf(searchParamName, StringComparison.CurrentCultureIgnoreCase) >= 0).ToList();
+            }
+
+            if(searchParamAge > 0)
+            {
+                List<ApplicationUser> updatedMemberList = new List<ApplicationUser>();
+                var today = DateTime.Today;
+                foreach(var member in memberList)
+                {
+                    if(member.DateOfBirth != "")
+                    {
+                        var dateOfBirth = Convert.ToDateTime(member.DateOfBirth);
+                        var age = today.Year - dateOfBirth.Year;
+                        if (dateOfBirth.Date > today.AddYears(-age)) age--;
+
+                        if(searchParamAge == age)
+                        {
+                            updatedMemberList.Add(member);
+                        }
+                    }     
+                }
+
+                memberList = updatedMemberList;
+            }
+
+            return memberList;
         }
 
         // GET: DeleteMe/Details/5

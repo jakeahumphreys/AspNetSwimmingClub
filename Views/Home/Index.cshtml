@@ -1,31 +1,265 @@
-﻿@{
+﻿@model MVCWebAssignment1.Models.HomeViewModel
+
+@{
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
-
 <div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+    <div>
+        <h4>Filters</h4>
+        @using (Html.BeginForm())
+        {
+            <p>
+                Age: @Html.DropDownList("searchParamAge", new[] {
+                new SelectListItem() {Text = "Under 14 (Junior)"},
+                new SelectListItem() {Text = "Over 16 (Senior)"}
+                }, "Select Age")
+
+                Venue: @Html.TextBox("searchParamVenue")
+                Distance :@Html.TextBox("searchParamDistance")
+                Stroke :@Html.TextBox("searchParamStroke")
+                Gender :@Html.TextBox("searchParamGender")
+
+
+                <input type="submit" value="Search" />
+            </p>
+        }
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+
+    <div>
+        <h2>Swimming Events</h2>
+        <table class="table">
+            <tr>
+                <td>
+                    @Html.DisplayNameFor(model => model.Events[0].Meet.MeetName)
+                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Events[0].AgeRange)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Events[0].Gender)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Events[0].Distance)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Events[0].SwimmingStroke)
+                </th>
+                <th>
+                    @Html.DisplayName("Event Information")
+                </th>
+                <th>
+                    @Html.DisplayName("Lane Information")
+                </th>
+            </tr>
+
+            @foreach (var item in Model.Events)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Meet.MeetName)
+                        (@Html.DisplayFor(modelItem => item.Meet.Date))
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AgeRange)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Gender)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Distance)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SwimmingStroke)
+                    </td>
+                    <td>
+                        Venue: @Html.DisplayFor(modelItem => item.Meet.Venue.VenueName)
+                        <br />
+                        Date: @Html.DisplayFor(modelItem => item.Meet.Date)
+                    </td>
+                    <td>
+                        @if (item.Rounds.Count > 0)
+                        {
+                            foreach (var round in item.Rounds)
+                            {
+                                if (round.Lanes.Count > 0)
+                                {
+                                    <div>
+                                        <b>Round @round.RoundNumber</b>
+                                        @foreach (var lane in round.Lanes)
+                                        {
+                                            <p>Lane @lane.LaneNumber - @lane.Swimmer.Name</p>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <b>Round @round.RoundNumber</b>
+                                    <p>No lanes to display.</p>
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            <p>No rounds configured.</p>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
     </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
+
+    @if (User.IsInRole("Member"))
+    {
+        <hr />
+        <div>
+            <h2>Your Events</h2>
+            <table class="table">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PersonalEvents[0].Meet.MeetName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PersonalEvents[0].AgeRange)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PersonalEvents[0].Gender)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PersonalEvents[0].Distance)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PersonalEvents[0].SwimmingStroke)
+                    </th>
+                    <th>
+                        @Html.DisplayName("Event Information")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Your Lanes")
+                    </th>
+                </tr>
+
+                @foreach (var item in Model.PersonalEvents)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Meet.MeetName)
+                            (@Html.DisplayFor(modelItem => item.Meet.Date))
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AgeRange)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Gender)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Distance)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SwimmingStroke)
+                        </td>
+                        <td>
+                            Venue: @Html.DisplayFor(modelItem => item.Meet.Venue.VenueName)
+                        </td>
+                        <td>
+                            @foreach (var round in item.Rounds)
+                            {
+                                foreach (var lane in round.Lanes)
+                                {
+                                    if (lane.SwimmerId == ViewBag.SwimmerId)
+                                    {
+                                        <b>Round @round.RoundNumber</b>
+                                        <p>Lane @lane.LaneNumber</p>
+                                    }
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+        <hr />
+        <div>
+            <h2>Your Peformances</h2>
+            <p> Historical data based on events in which you have participated. Events that you have not yet participated in will not be displayed.</p>
+            <table class="table">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PersonalEvents[0].Meet.MeetName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PersonalEvents[0].AgeRange)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PersonalEvents[0].Gender)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PersonalEvents[0].Distance)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PersonalEvents[0].SwimmingStroke)
+                    </th>
+                    <th>
+                        @Html.DisplayName("Event Information")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Your Performances")
+                    </th>
+                </tr>
+
+                @foreach (var item in Model.PersonalEvents)
+                {
+                    <tr>
+                        @foreach (var round in item.Rounds)
+                        {
+                            foreach (var lane in round.Lanes)
+                            {
+                                if (lane.SwimmerId == ViewBag.SwimmerId)
+                                {
+                                    if (!String.IsNullOrEmpty(lane.FinishTime) || !String.IsNullOrEmpty(lane.LaneComment))
+                                    {
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Meet.MeetName)
+                                            (@Html.DisplayFor(modelItem => item.Meet.Date))
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.AgeRange)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Gender)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Distance)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.SwimmingStroke)
+                                        </td>
+                                        <td>
+                                            Venue: @Html.DisplayFor(modelItem => item.Meet.Venue.VenueName)
+                                        </td>
+                                        if (!String.IsNullOrEmpty(lane.LaneComment))
+                                        {
+                                            <td>
+                                                DNF REASON:
+                                                @Html.DisplayName(lane.LaneComment)
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                @Html.DisplayName(lane.FinishTime)
+                                            </td>
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+
 </div>

@@ -1,27 +1,11 @@
 ﻿@model MVCWebAssignment1.Models.RoundViewModel
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Round " + Model.Round.RoundNumber;
 }
 
-<h2>Details</h2>
+<h2>Round @Model.Round.RoundNumber</h2>
 
-<div>
-    <h4>Round</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Round.RoundNumber)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Round.RoundNumber)
-        </dd>
-
-    </dl>
-</div>
-<h4>Lanes</h4>
-<hr />
 <table class="table">
     <tr>
         <th>
@@ -54,15 +38,12 @@
                 @Html.DisplayFor(modelItem => item.LaneComment)
             </td>
             <td>
-                @Html.ActionLink("Details", "Details", "Event", new { id = item.Id }, null) |
-                @Html.ActionLink("Delete", "Delete", "Round", new { id = item.Id }, null)
+                <button class="btn btn-primary" onclick="location.href='@Url.Action("Edit","Lane", new { id = item.Id })';return false;">Record Time</button>
+                <button class="btn btn-danger" onclick="location.href='@Url.Action("Delete","Lane",new { id = item.Id })';return false;">Delete Lane</button>
             </td>
         </tr>
     }
 </table>
-<button class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Lane",new {RoundId = Model.Round.Id})';return false;">Add Lane</button>
-
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Round.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+<hr />
+<button class="btn btn-primary glyphicon glyphicon-circle-arrow-left" data-toggle="tooltip" title="Back to Event" onclick="location.href='@Url.Action("Details", "Event", new { id = Model.Round.EventId })';return false;"></button>
+<button class="btn btn-success glyphicon glyphicon-plus" data-toggle="tooltip" title="Add new Event" onclick="location.href='@Url.Action("Create", "Lane", new {RoundId = Model.Round.Id })';return false;"></button>

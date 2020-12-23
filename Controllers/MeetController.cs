@@ -27,9 +27,31 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: Meet
-        public ActionResult Index()
+        public ActionResult Index(string searchParamDateLower, string searchParamDateUpper)
         {
-            return View(_meetRepository.GetMeets());
+            IList<Meet> meets = _meetRepository.GetMeets();
+
+            if(!String.IsNullOrEmpty(searchParamDateLower) && !String.IsNullOrEmpty(searchParamDateUpper))
+            {
+                IList<Meet> updatedMeets = new List<Meet>();
+                DateTime startDate = Convert.ToDateTime(searchParamDateLower);
+                DateTime endDate = Convert.ToDateTime(searchParamDateUpper);
+
+                foreach (var meet in meets)
+                {
+                    DateTime convertedDate = Convert.ToDateTime(meet.Date);
+                   
+                    if(convertedDate >= startDate && convertedDate <= endDate)
+                    {
+                        updatedMeets.Add(meet);
+                    }
+                    
+                }
+
+                meets = updatedMeets;
+            }
+
+            return View(meets);
         }
 
         // GET: Meet/Details/5

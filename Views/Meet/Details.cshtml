@@ -54,9 +54,13 @@
             <th>
                 @Html.DisplayNameFor(model => model.Events[0].SwimmingStroke)
             </th>
-            <th>
-                @Html.DisplayName("Actions")
-            </th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>
+                    @Html.DisplayName("Actions")
+                </th>
+            }
+
         </tr>
 
         @foreach (var item in Model.Events)
@@ -75,13 +79,20 @@
                     @Html.DisplayFor(modelItem => item.SwimmingStroke)
                 </td>
                 <td>
-                    <button class="btn btn-primary" onclick="location.href='@Url.Action("Details","Event", new { id = item.Id })';return false;">Event Details</button>
-                    <button class="btn btn-danger" onclick="location.href='@Url.Action("Delete","Event",new { id = item.Id })';return false;">Delete Event</button>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <button class="btn btn-primary" onclick="location.href='@Url.Action("Details","Event", new { id = item.Id })';return false;">Event Details</button>
+                        <button class="btn btn-danger" onclick="location.href='@Url.Action("Delete","Event",new { id = item.Id })';return false;">Delete Event</button>
+                    }
                 </td>
             </tr>
         }
     </table>
-    <button class="btn btn-primary glyphicon glyphicon-list" data-toggle="tooltip" title="Edit @Model.Meet.MeetName" onclick="location.href='@Url.Action("Index")';return false;"></button>
-    <button class="btn btn-primary glyphicon glyphicon-cog" data-toggle="tooltip" title="Edit @Model.Meet.MeetName" onclick="location.href='@Url.Action("Edit", new {id = Model.Meet.Id })';return false;"></button>
-    <button class="btn btn-success glyphicon glyphicon-plus" data-toggle="tooltip" title="Add new Event" onclick="location.href='@Url.Action("Create", "Event", new {MeetId = Model.Meet.Id })';return false;"></button>
+    <button class="btn btn-primary glyphicon glyphicon-list" data-toggle="tooltip" title="Back to meets" onclick="location.href='@Url.Action("Index")';return false;"></button>
+    @if (User.IsInRole("Admin"))
+    {
+        <button class="btn btn-primary glyphicon glyphicon-cog" data-toggle="tooltip" title="Edit @Model.Meet.MeetName" onclick="location.href='@Url.Action("Edit", new {id = Model.Meet.Id })';return false;"></button>
+        <button class="btn btn-success glyphicon glyphicon-plus" data-toggle="tooltip" title="Add new Event" onclick="location.href='@Url.Action("Create", "Event", new {MeetId = Model.Meet.Id })';return false;"></button>
+    }
+
 </div>
