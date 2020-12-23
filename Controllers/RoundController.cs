@@ -11,13 +11,18 @@ namespace MVCWebAssignment1.Controllers
 {
     public class RoundController : Controller
     {
-        private RoundRepository _roundRepository;
-        private LaneRepository _laneRepository;
+        private IRoundRepository _roundRepository;
+        private ILaneRepository _laneRepository;
 
         public RoundController()
         {
             _roundRepository = new RoundRepository(new RoundContext());
             _laneRepository = new LaneRepository(new LaneContext());
+        }
+
+        public RoundController(IRoundRepository roundRepository)
+        {
+            this._roundRepository = roundRepository;
         }
 
         // GET: Round
@@ -79,7 +84,7 @@ namespace MVCWebAssignment1.Controllers
 
         public ActionResult Delete(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }

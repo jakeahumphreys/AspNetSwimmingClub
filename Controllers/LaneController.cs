@@ -11,13 +11,18 @@ namespace MVCWebAssignment1.Controllers
 {
     public class LaneController : Controller
     {
-        private LaneRepository _laneRepository;
+        private ILaneRepository _laneRepository;
         private ApplicationDbContext _applicationDbContext;
 
         public LaneController()
         {
             _laneRepository = new LaneRepository(new LaneContext());
             _applicationDbContext = new ApplicationDbContext();
+        }
+
+        public LaneController(ILaneRepository laneRepository)
+        {
+            this._laneRepository = laneRepository;
         }
 
         // GET: Lane
@@ -29,7 +34,7 @@ namespace MVCWebAssignment1.Controllers
         // GET: Event/Edit/5
         public ActionResult Edit(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -93,7 +98,7 @@ namespace MVCWebAssignment1.Controllers
 
         public ActionResult Delete(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }

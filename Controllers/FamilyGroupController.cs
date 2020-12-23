@@ -13,7 +13,7 @@ namespace MVCWebAssignment1.Controllers
 {
     public class FamilyGroupController : Controller
     {
-        private FamilyGroupRepository _familyGroupRepository;
+        private IFamilyGroupRepository _familyGroupRepository;
         private ApplicationDbContext _applicationUserContext;
         // GET: FamilyGroup
 
@@ -22,6 +22,12 @@ namespace MVCWebAssignment1.Controllers
             _familyGroupRepository = new FamilyGroupRepository(new FamilyGroupContext());
             _applicationUserContext = new ApplicationDbContext();
         }
+
+        public FamilyGroupController(IFamilyGroupRepository familyGroupRepository)
+        {
+            this._familyGroupRepository = familyGroupRepository;
+        }
+
         public ActionResult Index()
         {
             return View(_familyGroupRepository.GetFamilyGroups());
@@ -34,7 +40,7 @@ namespace MVCWebAssignment1.Controllers
 
         public ActionResult Details(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }

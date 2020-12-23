@@ -26,6 +26,11 @@ namespace MVCWebAssignment1.Controllers
             _eventRepository = new EventRepository(new EventContext());
         }
 
+        public MeetController(IMeetRepository meetRepository)
+        {
+            this._meetRepository = meetRepository;
+        }
+
         // GET: Meet
         public ActionResult Index(string searchParamDateLower, string searchParamDateUpper)
         {
@@ -57,7 +62,7 @@ namespace MVCWebAssignment1.Controllers
         // GET: Meet/Details/5
         public ActionResult Details(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -127,7 +132,7 @@ namespace MVCWebAssignment1.Controllers
         // GET: Meet/Edit/5
         public ActionResult Edit(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -189,7 +194,7 @@ namespace MVCWebAssignment1.Controllers
         // GET: Meet/Delete/5
         public ActionResult Delete(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }

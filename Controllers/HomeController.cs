@@ -12,14 +12,15 @@ namespace MVCWebAssignment1.Controllers
     public class HomeController : Controller
     {
 
-        private EventRepository _eventRepository;
-        private LaneRepository _laneRepository;
+        private IEventRepository _eventRepository;
+        private ILaneRepository _laneRepository;
 
         public HomeController()
         {
             _eventRepository = new EventRepository(new EventContext());
             _laneRepository = new LaneRepository(new LaneContext());
         }
+
 
         public ViewResult Index(string searchParamVenue, string searchParamAge, string searchParamDistance, string searchParamStroke, string searchParamGender)
         {

@@ -13,15 +13,20 @@ namespace MVCWebAssignment1.Controllers
 {
     public class EventController : Controller
     {
-        private EventRepository _eventRepository;
-        private MeetRepository _meetRepository;
-        private RoundRepository _roundRepository;
+        private IEventRepository _eventRepository;
+        private IMeetRepository _meetRepository;
+        private IRoundRepository _roundRepository;
 
         public EventController()
         {
             _eventRepository = new EventRepository(new EventContext());
             _meetRepository = new MeetRepository(new MeetContext());
             _roundRepository = new RoundRepository(new RoundContext());
+        }
+
+        public EventController(IEventRepository eventRepository)
+        {
+            this._eventRepository = eventRepository;
         }
         // GET: Event
         public ActionResult Index()
@@ -31,7 +36,7 @@ namespace MVCWebAssignment1.Controllers
 
         public ActionResult Details(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -99,7 +104,7 @@ namespace MVCWebAssignment1.Controllers
         // GET: Event/Edit/5
         public ActionResult Edit(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -137,7 +142,7 @@ namespace MVCWebAssignment1.Controllers
         // GET: Event/Delete/5
         public ActionResult Delete(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }

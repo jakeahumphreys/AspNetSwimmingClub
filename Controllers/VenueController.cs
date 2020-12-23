@@ -13,11 +13,16 @@ namespace MVCWebAssignment1.Controllers
 {
     public class VenueController : Controller
     {
-        private VenueRepository _venueRepository;
+        private IVenueRepository _venueRepository;
 
         public VenueController()
         {
             _venueRepository = new VenueRepository(new VenueContext());
+        }
+
+        public VenueController(IVenueRepository venueRepository)
+        {
+            this._venueRepository = venueRepository;
         }
 
         // GET: Venues
@@ -29,7 +34,7 @@ namespace MVCWebAssignment1.Controllers
         // GET: Venues/Details/5
         public ActionResult Details(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -68,7 +73,7 @@ namespace MVCWebAssignment1.Controllers
         // GET: Venues/Edit/5
         public ActionResult Edit(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -99,7 +104,7 @@ namespace MVCWebAssignment1.Controllers
         // GET: Venues/Delete/5
         public ActionResult Delete(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
