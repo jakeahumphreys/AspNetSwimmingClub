@@ -108,6 +108,7 @@ namespace MVCWebAssignment1.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Venue venue = _venueRepository.GetVenueById(id);
             if (venue == null)
             {
