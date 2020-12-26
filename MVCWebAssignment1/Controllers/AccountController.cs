@@ -14,6 +14,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using MVCWebAssignment1.Customisations;
+using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
 
 namespace MVCWebAssignment1.Controllers
@@ -24,10 +25,12 @@ namespace MVCWebAssignment1.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private ApplicationDbContext _context;
+        private IFamilyGroupRepository _familyGroupRepository;
 
         public AccountController()
         {
             _context = new ApplicationDbContext();
+            _familyGroupRepository = new FamilyGroupRepository(new FamilyGroupContext());
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
@@ -70,13 +73,13 @@ namespace MVCWebAssignment1.Controllers
                 string currentUserId = User.Identity.GetUserId();
                 ApplicationUser parent = _context.Users.Where(x => x.Id == currentUserId).SingleOrDefault();
 
-                if(parent.FamilyGroup != null)
+                if(parent.FamilyGroupId != 0)
                 {
-                    var parentGroupId = parent.FamilyGroup.FamilyGroupId;
+                    var parentGroupId = parent.FamilyGroupId;
 
                     foreach (var user in _context.Users.ToList())
                     {
-                        if (user.FamilyGroup.FamilyGroupId == parentGroupId)
+                        if (user.FamilyGroupId == parentGroupId)
                         {
                             if (!UserManager.IsInRole(user.Id, "Parent"))
                             {
@@ -141,6 +144,8 @@ namespace MVCWebAssignment1.Controllers
             }
             
             ApplicationUser applicationUser = _context.Users.Find(id);
+            FamilyGroup familyGroup = _familyGroupRepository.GetFamilyGroupById((int)applicationUser.FamilyGroupId);
+            ViewBag.FamilyGroupName = familyGroup.GroupName;
            
             if (applicationUser == null)
             {
@@ -168,11 +173,11 @@ namespace MVCWebAssignment1.Controllers
             }
 
             editUserModel.User = applicationUser;
-            editUserModel.FamilyGroups = _context.FamilyGroups.ToList();
+            editUserModel.FamilyGroups = _familyGroupRepository.GetFamilyGroups().ToList();
 
-            if(editUserModel.User.FamilyGroup != null)
+            if(editUserModel.User.FamilyGroupId != 0)
             {
-                editUserModel.FamilyGroupId = editUserModel.User.FamilyGroup.FamilyGroupId.ToString();
+                editUserModel.FamilyGroupId = editUserModel.User.FamilyGroupId.ToString();
             }
             
 
@@ -193,7 +198,7 @@ namespace MVCWebAssignment1.Controllers
                 int.TryParse(editUserViewModel.FamilyGroupId,out familyId); //Convert ID from DropDownList to Integer
 
                 //Set ViewModel user's family group to result of a search of family groups by ID
-                editUserViewModel.User.FamilyGroup = _context.FamilyGroups.Where(x => x.FamilyGroupId == familyId).SingleOrDefault();
+                editUserViewModel.User.FamilyGroup = _familyGroupRepository.GetFamilyGroups().Where(x => x.FamilyGroupId == familyId).SingleOrDefault();
 
                 //load existing user from database
                 ApplicationUser user = _context.Users.Find(editUserViewModel.User.Id);
@@ -211,7 +216,11 @@ namespace MVCWebAssignment1.Controllers
                 user.PhoneNumber = editUserViewModel.User.PhoneNumber;
                 user.LockoutEnabled = editUserViewModel.User.LockoutEnabled;
                 user.LockoutEndDateUtc = editUserViewModel.User.LockoutEndDateUtc;
-                user.FamilyGroup = editUserViewModel.User.FamilyGroup;
+
+                if(familyId != 0)
+                {
+                    user.FamilyGroupId = editUserViewModel.User.FamilyGroup.FamilyGroupId;
+                }
 
                 //Save user back to database
                 _context.Entry(user).State = EntityState.Modified;
@@ -222,7 +231,7 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: DeleteMe/Delete/5
-        [CustomAuthorize(Roles = "Parent,Admin")]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Delete(string id)
         {
             if (id == null)
@@ -344,6 +353,7 @@ namespace MVCWebAssignment1.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             Debug.WriteLine("Saving!");

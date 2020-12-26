@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using MVCWebAssignment1.Customisations;
 using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
 using System;
@@ -28,16 +29,19 @@ namespace MVCWebAssignment1.Controllers
             this._familyGroupRepository = familyGroupRepository;
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Index()
         {
             return View(_familyGroupRepository.GetFamilyGroups());
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Details(int id)
         {
             if (id == 0)
@@ -60,26 +64,30 @@ namespace MVCWebAssignment1.Controllers
 
             IList<ApplicationUser> familyGroupMembers = new List<ApplicationUser>();
 
-            //Add list of familygroup members to model
-            foreach( var user in _applicationUserContext.Users.ToList())
+            if(_applicationUserContext != null)
             {
-                if(user.FamilyGroup != null)
+                //Add list of familygroup members to model
+                foreach (var user in _applicationUserContext.Users.ToList())
                 {
-                    if (user.FamilyGroup.FamilyGroupId == groupId)
+                    if (user.FamilyGroupId > 0)
                     {
-                        familyGroupMembers.Add(user);
+                        if (user.FamilyGroupId == groupId)
+                        {
+                            familyGroupMembers.Add(user);
+                        }
                     }
-                }    
-            }
+                }
 
-            familyGroupViewModel.FamilyGroupMembers = familyGroupMembers;
+                familyGroupViewModel.FamilyGroupMembers = familyGroupMembers;
+            }
+          
 
             return View(familyGroupViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(FamilyGroup familygroup)
         {
             if (ModelState.IsValid)

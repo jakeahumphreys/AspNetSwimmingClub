@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using MVCWebAssignment1.Customisations;
 using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
 
@@ -26,12 +27,14 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: Venues
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Index()
         {
             return View(_venueRepository.GetVenues());
         }
 
         // GET: Venues/Details/5
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Details(int id)
         {
             if (id == 0)
@@ -48,6 +51,7 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: Venues/Create
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
@@ -58,6 +62,7 @@ namespace MVCWebAssignment1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(Venue venue)
         {
             if (ModelState.IsValid)
@@ -71,6 +76,7 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: Venues/Edit/5
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
             if (id == 0)
@@ -90,6 +96,7 @@ namespace MVCWebAssignment1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit([Bind(Include = "Id,VenueName,Address")] Venue venue)
         {
             if (ModelState.IsValid)
@@ -102,6 +109,7 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: Venues/Delete/5
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             if (id == 0)
@@ -120,6 +128,7 @@ namespace MVCWebAssignment1.Controllers
         // POST: Venues/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             Venue venue = _venueRepository.GetVenueById(id);

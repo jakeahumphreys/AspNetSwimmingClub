@@ -4,11 +4,8 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Manage Family Groups</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
@@ -17,17 +14,17 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.GroupName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.FamilyGroupId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.FamilyGroupId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.FamilyGroupId })
-        </td>
-    </tr>
-}
-
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.GroupName)
+            </td>
+            <td>
+                <button class="btn btn-primary" onclick="location.href='@Url.Action("Details",new { id = item.FamilyGroupId })';return false;">Details</button>
+            </td>
+        </tr>
+    }
 </table>
+<button class="btn btn-success" onclick="location.href='@Url.Action("Create")';return false;">New Family Group</button>
+

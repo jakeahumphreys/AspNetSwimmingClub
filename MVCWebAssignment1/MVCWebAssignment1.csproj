@@ -226,6 +226,10 @@
     <Compile Include="Migrations\MigrationContext\202012192221250_AddSwimmerId.Designer.cs">
       <DependentUpon>202012192221250_AddSwimmerId.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\MigrationContext\202012261304427_CorrectFamilyGroupId.cs" />
+    <Compile Include="Migrations\MigrationContext\202012261304427_CorrectFamilyGroupId.Designer.cs">
+      <DependentUpon>202012261304427_CorrectFamilyGroupId.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\MigrationContext\ConfigurationMigrationContext.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\EditUserViewModel.cs" />
@@ -366,6 +370,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\MigrationContext\202012192221250_AddSwimmerId.resx">
       <DependentUpon>202012192221250_AddSwimmerId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\MigrationContext\202012261304427_CorrectFamilyGroupId.resx">
+      <DependentUpon>202012261304427_CorrectFamilyGroupId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

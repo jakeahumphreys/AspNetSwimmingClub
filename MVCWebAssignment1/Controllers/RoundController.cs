@@ -1,4 +1,5 @@
-﻿using MVCWebAssignment1.DAL;
+﻿using MVCWebAssignment1.Customisations;
+using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
 using System;
 using System.Collections.Generic;
@@ -20,17 +21,20 @@ namespace MVCWebAssignment1.Controllers
             _laneRepository = new LaneRepository(new LaneContext());
         }
 
-        public RoundController(IRoundRepository roundRepository)
+        public RoundController(IRoundRepository roundRepository, ILaneRepository laneRepository)
         {
             this._roundRepository = roundRepository;
+            this._laneRepository = laneRepository;
         }
 
         // GET: Round
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Index()
         {
             return View(_roundRepository.GetRounds());
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(int EventId)
         {
             int roundNumber = _roundRepository.GetRounds().Where(x => x.EventId == EventId).ToList().Count + 1;
@@ -48,6 +52,7 @@ namespace MVCWebAssignment1.Controllers
             return View();
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Details(int id)
         {
             if (id == 0)
@@ -82,6 +87,7 @@ namespace MVCWebAssignment1.Controllers
             return View(roundViewModel);
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             if (id == 0)
@@ -98,6 +104,7 @@ namespace MVCWebAssignment1.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             Round round = _roundRepository.GetRoundById(id);

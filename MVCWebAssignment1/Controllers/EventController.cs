@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using MVCWebAssignment1.Customisations;
 using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
 
@@ -24,16 +25,20 @@ namespace MVCWebAssignment1.Controllers
             _roundRepository = new RoundRepository(new RoundContext());
         }
 
-        public EventController(IEventRepository eventRepository)
+        public EventController(IEventRepository eventRepository, IMeetRepository meetRepository, IRoundRepository roundRepository)
         {
             this._eventRepository = eventRepository;
+            this._meetRepository = meetRepository;
+            this._roundRepository = roundRepository;
         }
         // GET: Event
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Index()
         {
             return View(_eventRepository.GetEvents());
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Details(int id)
         {
             if (id == 0)
@@ -72,6 +77,7 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: Event/Create
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(int MeetId)
         {
             EventViewModel eventViewModel = new EventViewModel();
@@ -85,6 +91,7 @@ namespace MVCWebAssignment1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(EventViewModel eventViewModel)
         {
             if (ModelState.IsValid)
@@ -102,6 +109,7 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: Event/Edit/5
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
             if (id == 0)
@@ -121,6 +129,7 @@ namespace MVCWebAssignment1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(Event @event)
         {
             Event eventToUpdate = _eventRepository.GetEventById(@event.Id);
@@ -140,6 +149,7 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: Event/Delete/5
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             if (id == 0)
@@ -155,6 +165,7 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // POST: Event/Delete/5
+        [CustomAuthorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

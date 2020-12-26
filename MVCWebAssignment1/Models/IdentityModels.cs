@@ -20,13 +20,18 @@ namespace MVCWebAssignment1.Models
             return userIdentity;
         }
 
+        [Display(Name = "Name")]
         public string Name { get; set; }
+        [Display(Name = "Gender")]
         public string Gender { get; set; }
+        [Display(Name = "Address")]
         public string Address { get; set; }
-
+        [Display(Name = "Date of Birth")]
         public string DateOfBirth { get; set; }
+        [Display(Name = "Permission to swim?")]
         public bool IsAllowedToSwim { get; set; }
 
+        public int? FamilyGroupId { get; set; }
         public FamilyGroup FamilyGroup { get; set; }
         //EF6 Lane Reference
     }
@@ -34,9 +39,6 @@ namespace MVCWebAssignment1.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
 
-        public DbSet<FamilyGroup> FamilyGroups { get; set; }
-        public DbSet<Round> Rounds { get; set; }
-        public DbSet<Lane> Lanes { get; set; }
         public ApplicationDbContext(): base("DefaultConnection", throwIfV1Schema: false)
         {
         }

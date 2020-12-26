@@ -11,63 +11,77 @@ namespace MVCWebAssignmentTests
     [TestClass]
     public class VenueControllerTest
     {
+        private Mock<IVenueRepository> _mockVenueRepository;
+
+
+        public VenueControllerTest()
+        {
+            _mockVenueRepository = new Mock<IVenueRepository>();
+        }
+
         [TestMethod]
         public void VenueIndexTest()
         {
-            Mock<IVenueRepository> mockVenueRepository = new Mock<IVenueRepository>();
-            var venueController = new VenueController(mockVenueRepository.Object);
+            var venueController = new VenueController(_mockVenueRepository.Object);
             //nulls for search params
             var result = venueController.Index();
             Assert.AreEqual(result.GetType(), typeof(ViewResult));
         }
 
         [TestMethod]
-        public void VenueDetailsTest()
+        public void VenueCreateViewTest()
         {
-            var testVenue = new Venue {
-                Id = 1,
-                VenueName = "Test Venue",
-                Address = "Test Street"
-            };
-
-            Mock<IVenueRepository> mockVenueRepository = new Mock<IVenueRepository>();
-            mockVenueRepository.Setup(x => x.GetVenueById(1)).Returns(testVenue);
-            var venueController = new VenueController(mockVenueRepository.Object);
-            var result = venueController.Details(1);
+            var venueController = new VenueController(_mockVenueRepository.Object);
+            var result = venueController.Create();
             Assert.AreEqual(result.GetType(), typeof(ViewResult));
+
         }
 
         [TestMethod]
-        public void VenueCreateTest()
+        public void VenueCreateActionTest()
         {
-            var testVenue = new Venue
-            {
-                Id = 1,
-                VenueName = "Test Venue",
-                Address = "Test Street"
-            };
+            var mockVenue = new Venue {Id = 1, VenueName = "Test Venue", Address = "Test Street"};
 
-            Mock<IVenueRepository> mockVenueRepository = new Mock<IVenueRepository>();
-            var venueController = new VenueController(mockVenueRepository.Object);
-            var result = venueController.Create(testVenue);
+            var venueController = new VenueController(_mockVenueRepository.Object);
+            var result = venueController.Create(mockVenue);
             Assert.AreEqual(result.GetType(), typeof(RedirectToRouteResult));
 
         }
 
         [TestMethod]
-        public void VenueEditTest()
+        public void VenueDetailsTest()
         {
-            var testVenue = new Venue
-            {
-                Id = 1,
-                VenueName = "Test Venue",
-                Address = "Test Street"
-            };
+            var mockVenue = new Venue { Id = 1, VenueName = "Test Venue", Address = "Test Street" };
 
-            Mock<IVenueRepository> mockVenueRepository = new Mock<IVenueRepository>();
-            var venueController = new VenueController(mockVenueRepository.Object);
-            mockVenueRepository.Setup(x => x.UpdateVenue(It.IsAny<Venue>()));
-            var result = venueController.Edit(testVenue);
+            _mockVenueRepository.Setup(x => x.GetVenueById(1)).Returns(mockVenue);
+            var venueController = new VenueController(_mockVenueRepository.Object);
+            var result = venueController.Details(1);
+            Assert.AreEqual(result.GetType(), typeof(ViewResult));
+        }
+
+
+        [TestMethod]
+        public void VenueEditViewTest()
+        {
+            var mockVenue = new Venue { Id = 1, VenueName = "Test Venue", Address = "Test Street" };
+
+
+            var venueController = new VenueController(_mockVenueRepository.Object);
+            _mockVenueRepository.Setup(x => x.GetVenueById(1)).Returns(mockVenue);
+            var result = venueController.Edit(1);
+            Assert.AreEqual(result.GetType(), typeof(ViewResult));
+
+        }
+
+        [TestMethod]
+        public void VenueEditActionTest()
+        {
+            var mockVenue = new Venue { Id = 1, VenueName = "Test Venue", Address = "Test Street" };
+
+
+            var venueController = new VenueController(_mockVenueRepository.Object);
+            _mockVenueRepository.Setup(x => x.GetVenueById(1)).Returns(mockVenue);
+            var result = venueController.Edit(mockVenue);
             Assert.AreEqual(result.GetType(), typeof(RedirectToRouteResult));
 
         }
@@ -75,16 +89,11 @@ namespace MVCWebAssignmentTests
         [TestMethod]
         public void VenueDeleteTest()
         {
-            var testVenue = new Venue
-            {
-                Id = 1,
-                VenueName = "Test Venue",
-                Address = "Test Street"
-            };
+            var mockVenue = new Venue { Id = 1, VenueName = "Test Venue", Address = "Test Street" };
 
-            Mock<IVenueRepository> mockVenueRepository = new Mock<IVenueRepository>();
-            var venueController = new VenueController(mockVenueRepository.Object);
-            mockVenueRepository.Setup(x => x.GetVenueById(1)).Returns(testVenue);
+
+            var venueController = new VenueController(_mockVenueRepository.Object);
+            _mockVenueRepository.Setup(x => x.GetVenueById(1)).Returns(mockVenue);
             var result = venueController.Delete(1);
             Assert.AreEqual(result.GetType(), typeof(ViewResult));
         }
@@ -92,16 +101,11 @@ namespace MVCWebAssignmentTests
         [TestMethod]
         public void VenueDeleteConfirmedTest()
         {
-            var testVenue = new Venue
-            {
-                Id = 1,
-                VenueName = "Test Venue",
-                Address = "Test Street"
-            };
+            var mockVenue = new Venue { Id = 1, VenueName = "Test Venue", Address = "Test Street" };
 
-            Mock<IVenueRepository> mockVenueRepository = new Mock<IVenueRepository>();
-            var venueController = new VenueController(mockVenueRepository.Object);
-            mockVenueRepository.Setup(x => x.DeleteVenue(It.IsAny<Venue>()));
+
+            var venueController = new VenueController(_mockVenueRepository.Object);
+            _mockVenueRepository.Setup(x => x.DeleteVenue(It.IsAny<Venue>()));
             var result = venueController.DeleteConfirmed(1);
             Assert.AreEqual(result.GetType(), typeof(RedirectToRouteResult));
         }

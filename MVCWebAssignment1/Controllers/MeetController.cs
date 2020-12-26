@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using MVCWebAssignment1.Customisations;
 using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
 
@@ -26,9 +27,11 @@ namespace MVCWebAssignment1.Controllers
             _eventRepository = new EventRepository(new EventContext());
         }
 
-        public MeetController(IMeetRepository meetRepository)
+        public MeetController(IMeetRepository meetRepository, IEventRepository eventRepository, IVenueRepository venueRepository)
         {
             this._meetRepository = meetRepository;
+            this._eventRepository = eventRepository;
+            this._venueRepository = venueRepository;
         }
 
         // GET: Meet
@@ -98,11 +101,16 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: Meet/Create
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create()
         {
             MeetViewModel meetViewModel = new MeetViewModel();
 
-            meetViewModel.Venues = _venueRepository.GetVenues();
+            if(_venueRepository != null)
+            {
+                meetViewModel.Venues = _venueRepository.GetVenues();
+            }
+
 
             return View(meetViewModel);
         }
@@ -110,6 +118,7 @@ namespace MVCWebAssignment1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(MeetViewModel meetViewModel)
         {
             int venueId;
@@ -130,6 +139,7 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: Meet/Edit/5
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
             if (id == 0)
@@ -163,6 +173,7 @@ namespace MVCWebAssignment1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(MeetViewModel meetViewModel)
         {
             int venueId;
@@ -192,6 +203,7 @@ namespace MVCWebAssignment1.Controllers
         }
 
         // GET: Meet/Delete/5
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             if (id == 0)
@@ -209,6 +221,7 @@ namespace MVCWebAssignment1.Controllers
         // POST: Meet/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             Meet meet = _meetRepository.GetMeetById(id);

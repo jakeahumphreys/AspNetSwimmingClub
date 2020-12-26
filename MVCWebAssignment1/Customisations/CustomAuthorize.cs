@@ -13,16 +13,13 @@ namespace MVCWebAssignment1.Customisations
         {
             if (filterContext.HttpContext.User.Identity.IsAuthenticated)
             {
-                if (filterContext.HttpContext.User.Identity.IsAuthenticated)
-                {
-                    // user is logged-in, so redirecting to login page won't help, must be premium
-                    filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Area = "Index", Controller = "Error", Action = "" }));
-                }
-                else
-                {
-                    // let the base implementation redirect the user
-                    base.HandleUnauthorizedRequest(filterContext);
-                }
+                // user is logged-in, so redirecting to login page won't help, must be premium
+                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Error", action = "Error", ErrorType = ErrorType.Account}));
+            }
+            else
+            {
+                // let the base implementation redirect the user
+                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Error", action = "Error", ErrorType = ErrorType.Authorisation}));
             }
         }
     }

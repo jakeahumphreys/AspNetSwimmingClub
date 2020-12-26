@@ -1,4 +1,5 @@
-﻿using MVCWebAssignment1.DAL;
+﻿using MVCWebAssignment1.Customisations;
+using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
 using System;
 using System.Collections.Generic;
@@ -20,18 +21,21 @@ namespace MVCWebAssignment1.Controllers
             _applicationDbContext = new ApplicationDbContext();
         }
 
-        public LaneController(ILaneRepository laneRepository)
+        public LaneController(ILaneRepository laneRepository, ApplicationDbContext _applicationDbContext)
         {
             this._laneRepository = laneRepository;
+            this._applicationDbContext = _applicationDbContext;
         }
 
         // GET: Lane
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Index()
         {
             return View(_laneRepository.GetLanes());
         }
 
         // GET: Event/Edit/5
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
             if (id == 0)
@@ -52,6 +56,7 @@ namespace MVCWebAssignment1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(Lane lane)
         {
             Lane laneToUpdate = _laneRepository.GetLaneById(lane.Id);
@@ -68,19 +73,24 @@ namespace MVCWebAssignment1.Controllers
             return View(lane);
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(int RoundId)
         {
             LaneViewModel laneViewModel = new LaneViewModel();
             laneViewModel.RoundId = RoundId;
             ViewBag.RoundId = RoundId;
 
-            laneViewModel.AvailableSwimmers = _applicationDbContext.Users.Where(x => x.IsAllowedToSwim == true).ToList();
+            if(_applicationDbContext != null)
+            {
+                laneViewModel.AvailableSwimmers = _applicationDbContext.Users.Where(x => x.IsAllowedToSwim == true).ToList();
+            }
 
             return View(laneViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(LaneViewModel laneViewModel)
         {
             if (ModelState.IsValid)
@@ -96,6 +106,7 @@ namespace MVCWebAssignment1.Controllers
             return View(laneViewModel);
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             if (id == 0)
@@ -112,6 +123,7 @@ namespace MVCWebAssignment1.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             Lane lane = _laneRepository.GetLaneById(id);

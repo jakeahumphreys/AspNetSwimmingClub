@@ -4,13 +4,36 @@
     ViewBag.Title = "An error has occured.";
 }
 
-<h3>An Error has occured.</h3>
+<h3>The action you selected has not been performed for the following reason:</h3>
 
 @if (ViewBag.ErrorType == ErrorType.NoFamily)
 {
-    <div class="alert-danger">
+    <div class="alert-info">
         <p>You're not currently part of a family group. Please contact a club official.</p>
-        <asp:button class="btn-primary" id="backButton" runat="server" text="Back" OnClientClick="JavaScript:window.history.back(1);return false;"></asp:button>
     </div>
+    <button class="btn btn-success" onclick="location.href='@Url.Action("Index", "Home")';return false;">Return to Home</button>
 }
+
+@if (ViewBag.ErrorType == ErrorType.Authorisation)
+{
+    <div class="alert-info">
+        <p>You are not authorised to access this resource.</p>
+    </div>
+    <button class="btn btn-success" onclick="location.href='@Url.Action("Index", "Home")';return false;">Return to Home</button>
+}
+@if (ViewBag.ErrorType == ErrorType.System)
+{
+    <div class="alert-danger">
+        <p>A system error has occured.</p>
+    </div>
+    <button class="btn btn-success" onclick="location.href='@Url.Action("Index", "Home")';return false;">Return to Home</button>
+}
+@if (ViewBag.ErrorType == ErrorType.Account)
+{
+    <div class="alert-warning">
+        <p>Your account does not have sufficient permissions to access this resource.</p>
+    </div>
+    <button class="btn btn-success" onclick="location.href='@Url.Action("Index", "Home")';return false;">Return to Home</button>
+}
+
 

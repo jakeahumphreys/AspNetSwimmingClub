@@ -103,5 +103,5 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    <button class="btn btn-primary glyphicon glyphicon-circle-arrow-left" data-toggle="tooltip" title="Back" onclick="location.href='@Url.Action("Index")';return false;"></button>
 </div>
