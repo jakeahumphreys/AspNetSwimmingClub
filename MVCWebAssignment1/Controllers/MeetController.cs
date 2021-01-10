@@ -83,7 +83,6 @@ namespace MVCWebAssignment1.Controllers
             }
         }
 
-        // GET: Meet/Edit/5
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
@@ -118,7 +117,6 @@ namespace MVCWebAssignment1.Controllers
             }
         }
 
-        // GET: Meet/Delete/5
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
@@ -136,7 +134,6 @@ namespace MVCWebAssignment1.Controllers
             }
         }
 
-        // POST: Meet/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [CustomAuthorize(Roles = "Admin")]
