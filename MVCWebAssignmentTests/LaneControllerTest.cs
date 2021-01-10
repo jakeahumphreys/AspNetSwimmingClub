@@ -30,6 +30,7 @@ namespace MVCWebAssignmentTests
         [TestMethod]
         public void LaneIndexTest()
         {
+            _mockLaneRepository.Setup(x => x.GetLanes()).Returns(new List<Lane>());
             var laneController = new LaneController(_mockLaneRepository.Object, _mockApplicationDbContext.Object);
             var result = laneController.Index();
             Assert.AreEqual(result.GetType(), typeof(ViewResult));

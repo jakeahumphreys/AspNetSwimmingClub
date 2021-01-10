@@ -134,7 +134,7 @@ namespace MVCWebAssignment1.Controllers
 
             if (response.Result == true)
             {
-                return RedirectToAction("Index", "Meet", null);
+                return RedirectToAction("Details", "Meet", new { @id = response.ReturnInt });
             }
             else
             {

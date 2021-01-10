@@ -14,7 +14,7 @@
     <h4>Lane</h4>
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.RoundId, new { @Value = ViewBag.RoundId })
+    @Html.HiddenFor(model => model.RoundId, new { @Value = Model.RoundId })
     <div class="form-group">
         @Html.LabelFor(model => model.Lane.Swimmer, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">

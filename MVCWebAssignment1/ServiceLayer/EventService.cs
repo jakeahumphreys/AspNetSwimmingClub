@@ -147,7 +147,7 @@ namespace MVCWebAssignment1.ServiceLayer
                 _eventRepository.DeleteEvent(@event);
                 _eventRepository.Save();
 
-                return new ServiceResponse { Result = true };
+                return new ServiceResponse { Result = true, ReturnInt = meetId};
             }
             else
             {
@@ -156,21 +156,6 @@ namespace MVCWebAssignment1.ServiceLayer
          
         }
         
-        public int GetMeetFromEvent(int id)
-        {
-            if(id != 0)
-            {                
-                Event @event = _eventRepository.GetEventById(id);
-                Meet meet = _meetRepository.GetMeetById(@event.MeetId);
-
-                return meet.Id;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
         public void Dispose()
         {
             _eventRepository.Dispose();

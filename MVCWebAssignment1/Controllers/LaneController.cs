@@ -1,6 +1,7 @@
 ﻿using MVCWebAssignment1.Customisations;
 using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
+using MVCWebAssignment1.ServiceLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,80 +13,63 @@ namespace MVCWebAssignment1.Controllers
 {
     public class LaneController : Controller
     {
-        private ILaneRepository _laneRepository;
-        private ApplicationDbContext _applicationDbContext;
+
+        private LaneService _laneService { get; set; }
 
         public LaneController()
         {
-            _laneRepository = new LaneRepository(new LaneContext());
-            _applicationDbContext = new ApplicationDbContext();
+            _laneService = new LaneService();
         }
 
         public LaneController(ILaneRepository laneRepository, ApplicationDbContext _applicationDbContext)
         {
-            this._laneRepository = laneRepository;
-            this._applicationDbContext = _applicationDbContext;
+            _laneService = new LaneService(laneRepository, _applicationDbContext);
         }
 
-        // GET: Lane
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Index()
         {
-            return View(_laneRepository.GetLanes());
+            return View(_laneService.GetIndex());
         }
 
-        // GET: Event/Edit/5
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_laneService.EditView(id));
             }
-            Lane lane = _laneRepository.GetLaneById(id);
-
-            if (lane == null)
+            catch(ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-            return View(lane);
+            catch (HttpException ex)
+            {
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
+            }
         }
 
-        // POST: Event/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(Lane lane)
         {
-            Lane laneToUpdate = _laneRepository.GetLaneById(lane.Id);
+            ServiceResponse response = _laneService.EditAction(lane);
 
-            laneToUpdate.FinishTime = lane.FinishTime;
-            laneToUpdate.LaneComment = lane.LaneComment;
-
-            if (ModelState.IsValid)
+            if (response.Result == true)
             {
-                _laneRepository.UpdateLane(laneToUpdate);
-                _laneRepository.Save();
-                return RedirectToAction("Details", "Round", new { @id = laneToUpdate.RoundId });
+                return RedirectToAction("Details", "Round", new { @id = lane.RoundId});
             }
-            return View(lane);
+            else
+            {
+                return View(response.ServiceObject as Lane);
+            }
         }
 
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(int RoundId)
         {
-            LaneViewModel laneViewModel = new LaneViewModel();
-            laneViewModel.RoundId = RoundId;
-            ViewBag.RoundId = RoundId;
-
-            if(_applicationDbContext != null)
-            {
-                laneViewModel.AvailableSwimmers = _applicationDbContext.Users.Where(x => x.IsAllowedToSwim == true).ToList();
-            }
-
-            return View(laneViewModel);
+            return View(_laneService.CreateView(RoundId));
         }
 
         [HttpPost]
@@ -93,32 +77,34 @@ namespace MVCWebAssignment1.Controllers
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(LaneViewModel laneViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                laneViewModel.Lane.RoundId = laneViewModel.RoundId;
-                laneViewModel.Lane.LaneNumber = _laneRepository.GetLanes().Where(x => x.RoundId == laneViewModel.RoundId).ToList().Count + 1;
-                laneViewModel.Lane.SwimmerId = laneViewModel.UserId;
-                _laneRepository.InsertLane(laneViewModel.Lane);
-                _laneRepository.Save();
-                return RedirectToAction("Details", "Round", new { @id = laneViewModel.RoundId});
-            }
+            ServiceResponse response = _laneService.CreateAction(laneViewModel);
 
-            return View(laneViewModel);
+            if(response.Result == true)
+            {
+                return RedirectToAction("Details", "Round", new { @id = laneViewModel.RoundId });
+
+            }
+            else
+            {
+                return View(laneViewModel);
+            }
         }
 
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_laneService.DeleteView(id));
             }
-            Lane lane = _laneRepository.GetLaneById(id);
-            if (lane == null)
+            catch (ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-            return View(lane);
+            catch (HttpException ex)
+            {
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
+            }
         }
 
         [HttpPost, ActionName("Delete")]
@@ -126,24 +112,25 @@ namespace MVCWebAssignment1.Controllers
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Lane lane = _laneRepository.GetLaneById(id);
-            var RoundId = lane.RoundId;
+            ServiceResponse response = _laneService.DeleteAction(id);
 
-            _laneRepository.DeleteLane(lane);
-            _laneRepository.Save();
-
-            var counter = 0;
-            foreach (var laneItem in _laneRepository.GetLanes().Where(x => x.RoundId == RoundId))
+            if (response.Result == true)
             {
-                counter++;
-                if (laneItem != null)
-                {
-                    laneItem.LaneNumber = counter;
-                    _laneRepository.UpdateLane(laneItem);
-                    _laneRepository.Save();
-                }
+                return RedirectToAction("Details", "Round", new { @id = response.ReturnInt});
             }
-            return RedirectToAction("Details", "Round", new { @id = RoundId });
+            else
+            {
+                return View();
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _laneService.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

@@ -9,5 +9,6 @@ namespace MVCWebAssignment1.ServiceLayer
     {
         public bool Result { get; set; }
         public Object ServiceObject { get; set; }
+        public int ReturnInt { get; set; }
     }
 }
