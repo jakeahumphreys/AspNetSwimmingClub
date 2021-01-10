@@ -28,6 +28,7 @@ namespace MVCWebAssignmentTests
         [TestMethod]
         public void FamilyGroupIndexTest()
         {
+            _mockFamilyGroupRepository.Setup(x => x.GetFamilyGroups()).Returns(new List<FamilyGroup>());
             var familyGroupController = new FamilyGroupController(_mockFamilyGroupRepository.Object);
             var result = familyGroupController.Index();
             Assert.AreEqual(result.GetType(), typeof(ViewResult));

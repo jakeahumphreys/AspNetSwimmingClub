@@ -32,6 +32,7 @@ namespace MVCWebAssignmentTests
         [TestMethod]
         public void EventIndexTest()
         {
+            _mockEventRepository.Setup(x => x.GetEvents()).Returns(new List<Event>());
             var eventController = new EventController(_mockEventRepository.Object, _mockMeetRepository.Object, _mockRoundRepository.Object);
             var result = eventController.Index();
             Assert.AreEqual(result.GetType(), typeof(ViewResult));

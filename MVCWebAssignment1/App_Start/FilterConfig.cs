@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using MVCWebAssignment1.Customisations;
+using System.Web;
 using System.Web.Mvc;
 
 namespace MVCWebAssignment1
@@ -7,7 +8,7 @@ namespace MVCWebAssignment1
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            filters.Add(new HandleErrorAttribute());
+            filters.Add(new CustomHandleErrorAttribute());
         }
     }
 }

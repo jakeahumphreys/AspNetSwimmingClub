@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Moq;
 using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
+using System.Collections.Generic;
 
 namespace MVCWebAssignmentTests
 {
@@ -22,6 +23,7 @@ namespace MVCWebAssignmentTests
         [TestMethod]
         public void VenueIndexTest()
         {
+            _mockVenueRepository.Setup(x => x.GetVenues()).Returns(new List<Venue>());
             var venueController = new VenueController(_mockVenueRepository.Object);
             //nulls for search params
             var result = venueController.Index();
@@ -105,6 +107,7 @@ namespace MVCWebAssignmentTests
 
 
             var venueController = new VenueController(_mockVenueRepository.Object);
+            _mockVenueRepository.Setup(x => x.GetVenueById(1)).Returns(mockVenue);
             _mockVenueRepository.Setup(x => x.DeleteVenue(It.IsAny<Venue>()));
             var result = venueController.DeleteConfirmed(1);
             Assert.AreEqual(result.GetType(), typeof(RedirectToRouteResult));

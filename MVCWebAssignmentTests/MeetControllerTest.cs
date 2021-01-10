@@ -30,6 +30,7 @@ namespace MVCWebAssignmentTests
         [TestMethod]
         public void MeetIndexTest()
         {
+            _mockMeetRepository.Setup(x => x.GetMeets()).Returns(new List<Meet>());
             var meetController = new MeetController(_mockMeetRepository.Object, _mockEventRepository.Object, _mockVenueRepository.Object);
             var result = meetController.Index(null,null);
             Assert.AreEqual(result.GetType(), typeof(ViewResult));
@@ -56,7 +57,7 @@ namespace MVCWebAssignmentTests
                 VenueId = 1
             };
             testMeetViewModel.Meet = testMeet;
-
+            testMeetViewModel.VenueId = "1";
             var meetController = new MeetController(_mockMeetRepository.Object, _mockEventRepository.Object, _mockVenueRepository.Object);
             var result = meetController.Create(testMeetViewModel);
             Assert.AreEqual(result.GetType(), typeof(RedirectToRouteResult));

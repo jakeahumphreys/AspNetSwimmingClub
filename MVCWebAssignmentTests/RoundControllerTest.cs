@@ -30,6 +30,7 @@ namespace MVCWebAssignmentTests
         [TestMethod]
         public void RoundIndexTest()
         {
+            _mockRoundRepository.Setup(x => x.GetRounds()).Returns(new List<Round>());
             var roundController = new RoundController(_mockRoundRepository.Object, _mockLaneRepository.Object);
             var result = roundController.Index();
             Assert.AreEqual(result.GetType(), typeof(ViewResult));

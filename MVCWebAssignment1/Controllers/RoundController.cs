@@ -1,6 +1,7 @@
 ﻿using MVCWebAssignment1.Customisations;
 using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
+using MVCWebAssignment1.ServiceLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,94 +13,71 @@ namespace MVCWebAssignment1.Controllers
 {
     public class RoundController : Controller
     {
-        private IRoundRepository _roundRepository;
-        private ILaneRepository _laneRepository;
+        private RoundService _roundService;
 
         public RoundController()
         {
-            _roundRepository = new RoundRepository(new RoundContext());
-            _laneRepository = new LaneRepository(new LaneContext());
+            _roundService = new RoundService();
         }
 
         public RoundController(IRoundRepository roundRepository, ILaneRepository laneRepository)
         {
-            this._roundRepository = roundRepository;
-            this._laneRepository = laneRepository;
+            this._roundService = new RoundService(roundRepository, laneRepository);
         }
 
-        // GET: Round
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Index()
         {
-            return View(_roundRepository.GetRounds());
+            return View(_roundService.GetIndex());
         }
 
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(int EventId)
         {
-            int roundNumber = _roundRepository.GetRounds().Where(x => x.EventId == EventId).ToList().Count + 1;
+            ServiceResponse response = _roundService.CreateAction(EventId);
 
-            Round round = new Round();
-            round.EventId = EventId;
-            round.RoundNumber = roundNumber;
-            if(ModelState.IsValid)
+            if (response.Result == true)
             {
-                _roundRepository.InsertRound(round);
-                _roundRepository.Save();
                 return RedirectToAction("Details", "Event", new { @id = EventId });
             }
-
-            return View();
+            else
+            {
+                return View();
+            }
         }
 
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Details(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_roundService.GetDetails(id));
             }
-            RoundViewModel roundViewModel = new RoundViewModel();
-
-            Round round = _roundRepository.GetRoundById(id);
-
-            if (round == null)
+            catch (ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-
-            //Get Lanes for this event
-            List<Lane> RelatedLanes = new List<Lane>();
-            int RoundId = round.Id;
-
-            RelatedLanes = _laneRepository.GetLanes().Where(x => x.RoundId == RoundId).ToList();
-
-            if(RelatedLanes != null)
+            catch (HttpException ex)
             {
-                roundViewModel.Lanes = RelatedLanes;
-
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-
-            //Add components to ViewModel
-            roundViewModel.Round = round;
-
-            //Return View
-            return View(roundViewModel);
         }
 
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_roundService.DeleteView(id));
             }
-            Round round = _roundRepository.GetRoundById(id);
-            if (round == null)
+            catch (ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-            return View(round);
+            catch (HttpException ex)
+            {
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
+            }
         }
 
         [HttpPost, ActionName("Delete")]
@@ -107,23 +85,25 @@ namespace MVCWebAssignment1.Controllers
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Round round = _roundRepository.GetRoundById(id);
-            var EventId = round.EventId;
+            ServiceResponse response = _roundService.DeleteAction(id);
 
-            _roundRepository.DeleteRound(round);
-            _roundRepository.Save();
-            var counter = 0;
-            foreach(var roundItem in _roundRepository.GetRounds().Where(x => x.EventId == EventId))
+            if (response.Result == true)
             {
-                counter++;
-                if(roundItem != null)
-                {
-                    roundItem.RoundNumber = counter;
-                    _roundRepository.UpdateRound(roundItem);
-                    _roundRepository.Save();
-                }
+                return RedirectToAction("Details", "Event", new { @id = response.ReturnInt });
             }
-            return RedirectToAction("Details", "Event", new { @id = EventId });
+            else
+            {
+                return View();
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _roundService.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

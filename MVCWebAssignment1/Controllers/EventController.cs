@@ -9,181 +9,144 @@ using System.Web.Mvc;
 using MVCWebAssignment1.Customisations;
 using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
+using MVCWebAssignment1.ServiceLayer;
 
 namespace MVCWebAssignment1.Controllers
 {
     public class EventController : Controller
     {
-        private IEventRepository _eventRepository;
-        private IMeetRepository _meetRepository;
-        private IRoundRepository _roundRepository;
+        private EventService _eventService;
 
         public EventController()
         {
-            _eventRepository = new EventRepository(new EventContext());
-            _meetRepository = new MeetRepository(new MeetContext());
-            _roundRepository = new RoundRepository(new RoundContext());
+            _eventService = new EventService();
         }
 
         public EventController(IEventRepository eventRepository, IMeetRepository meetRepository, IRoundRepository roundRepository)
         {
-            this._eventRepository = eventRepository;
-            this._meetRepository = meetRepository;
-            this._roundRepository = roundRepository;
+            this._eventService = new EventService(eventRepository, meetRepository, roundRepository);
         }
         // GET: Event
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Index()
         {
-            return View(_eventRepository.GetEvents());
+            return View(_eventService.GetIndex());
         }
 
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Details(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_eventService.GetDetails(id));
             }
-            EventViewModel eventViewModel = new EventViewModel();
-
-            Event @event = _eventRepository.GetEventById(id);
-
-            if (@event == null)
+            catch(ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-
-            //Get Rounds for this event
-            List<Round> RelatedRounds = new List<Round>();
-            int EventId = @event.Id;
-            foreach (var round in _roundRepository.GetRounds())
+            catch (HttpException ex)
             {
-                if (round.EventId != 0)
-                {
-                    if (round.EventId == EventId)
-                    {
-                        RelatedRounds.Add(round);
-                    }
-                }
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-
-            //Add components to ViewModel
-            eventViewModel.Event = @event;
-            eventViewModel.Rounds = RelatedRounds;
-
-            //Return View
-            return View(eventViewModel);
         }
 
-        // GET: Event/Create
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(int MeetId)
         {
-            EventViewModel eventViewModel = new EventViewModel();
-            eventViewModel.MeetId = MeetId;
-            ViewBag.MeetId = MeetId;
-            return View(eventViewModel);
+            return View(_eventService.CreateView(MeetId));
         }
 
-        // POST: Event/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(EventViewModel eventViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                if(eventViewModel.MeetId > 0)
-                {
-                    eventViewModel.Event.MeetId = eventViewModel.MeetId;
-                }
-                _eventRepository.InsertEvent(eventViewModel.Event);
-                _eventRepository.Save();
-                return RedirectToAction("Details", "Meet", new {@id = eventViewModel.MeetId});
-            }
+            ServiceResponse response = _eventService.CreateAction(eventViewModel);
 
-            return View(eventViewModel);
+            if(response.Result == true)
+            {
+                return RedirectToAction("Details", "Meet", new { @id = eventViewModel.MeetId });
+            }
+            else
+            {
+                return View(eventViewModel);
+            }
         }
 
         // GET: Event/Edit/5
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_eventService.EditView(id));
             }
-            Event @event = _eventRepository.GetEventById(id);
-            if (@event == null)
+            catch (ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-            return View(@event);
+            catch (HttpException ex)
+            {
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
+            }
         }
 
-        // POST: Event/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(Event @event)
         {
-            Event eventToUpdate = _eventRepository.GetEventById(@event.Id);
+            ServiceResponse response = _eventService.EditAction(@event);
 
-            eventToUpdate.AgeRange = @event.AgeRange;
-            eventToUpdate.Distance = @event.Distance;
-            eventToUpdate.Gender = @event.Gender;
-            eventToUpdate.SwimmingStroke = @event.SwimmingStroke;
-
-            if (ModelState.IsValid)
+            if(response.Result == true)
             {
-                _eventRepository.UpdateEvent(eventToUpdate);
-                _eventRepository.Save();
-                return RedirectToAction("Details", "Event", new { @id = eventToUpdate.Id});
+                return RedirectToAction("Details", "Event", new { @id = @event.Id });
             }
-            return View(@event);
+            else
+            {
+                return View(@event);
+            }
         }
 
-        // GET: Event/Delete/5
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_eventService.DeleteView(id));
             }
-            Event @event = _eventRepository.GetEventById(id);
-            if (@event == null)
+            catch (ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-            return View(@event);
+            catch (HttpException ex)
+            {
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
+            }
         }
 
-        // POST: Event/Delete/5
         [CustomAuthorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
- 
-            Event @event = _eventRepository.GetEventById(id);
-            var meetId = @event.MeetId;
-            _eventRepository.DeleteEvent(@event);
-            _eventRepository.Save();
-            return RedirectToAction("Details", "Meet", new { @id = meetId });
+            ServiceResponse response = _eventService.DeleteAction(id);
+
+            if (response.Result == true)
+            {
+                return RedirectToAction("Details", "Meet", new { @id = response.ReturnInt });
+            }
+            else
+            {
+                return View();
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                _eventRepository.Dispose();
-                _meetRepository.Dispose();
+                _eventService.Dispose();
             }
             base.Dispose(disposing);
         }

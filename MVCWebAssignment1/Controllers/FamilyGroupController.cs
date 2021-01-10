@@ -2,6 +2,7 @@
 using MVCWebAssignment1.Customisations;
 using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
+using MVCWebAssignment1.ServiceLayer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,25 +15,25 @@ namespace MVCWebAssignment1.Controllers
 {
     public class FamilyGroupController : Controller
     {
-        private IFamilyGroupRepository _familyGroupRepository;
-        private ApplicationDbContext _applicationUserContext;
+        private FamilyGroupService _familyGroupService;
+
+
         // GET: FamilyGroup
 
         public FamilyGroupController()
         {
-            _familyGroupRepository = new FamilyGroupRepository(new FamilyGroupContext());
-            _applicationUserContext = new ApplicationDbContext();
+            _familyGroupService = new FamilyGroupService();
         }
 
         public FamilyGroupController(IFamilyGroupRepository familyGroupRepository)
         {
-            this._familyGroupRepository = familyGroupRepository;
+            _familyGroupService = new FamilyGroupService(familyGroupRepository);
         }
 
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Index()
         {
-            return View(_familyGroupRepository.GetFamilyGroups());
+            return View(_familyGroupService.GetIndex());
         }
 
         [CustomAuthorize(Roles = "Admin")]
@@ -44,45 +45,18 @@ namespace MVCWebAssignment1.Controllers
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Details(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_familyGroupService.GetDetails(id));
             }
-
-
-            //Create View Model
-            FamilyGroupViewModel familyGroupViewModel = new FamilyGroupViewModel();
-
-            //Add object of family group to view model
-            familyGroupViewModel.FamilyGroup = _familyGroupRepository.GetFamilyGroupById(id);
-            var groupId = familyGroupViewModel.FamilyGroup.FamilyGroupId;
-
-            if (familyGroupViewModel.FamilyGroup == null)
+            catch(ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { ErrorType = ErrorType.Service, message = ex.Message });
             }
-
-            IList<ApplicationUser> familyGroupMembers = new List<ApplicationUser>();
-
-            if(_applicationUserContext != null)
+            catch(HttpException ex)
             {
-                //Add list of familygroup members to model
-                foreach (var user in _applicationUserContext.Users.ToList())
-                {
-                    if (user.FamilyGroupId > 0)
-                    {
-                        if (user.FamilyGroupId == groupId)
-                        {
-                            familyGroupMembers.Add(user);
-                        }
-                    }
-                }
-
-                familyGroupViewModel.FamilyGroupMembers = familyGroupMembers;
+                return RedirectToAction("Error", "Error", new { ErrorType = ErrorType.Service, message = ex.Message });
             }
-          
-
-            return View(familyGroupViewModel);
         }
 
         [HttpPost]
@@ -90,20 +64,23 @@ namespace MVCWebAssignment1.Controllers
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(FamilyGroup familygroup)
         {
-            if (ModelState.IsValid)
+            ServiceResponse response = _familyGroupService.CreateAction(familygroup);
+
+            if(response.Result == true)
             {
-                _familyGroupRepository.InsertFamilyGroup(familygroup);
-                _familyGroupRepository.Save();
                 return RedirectToAction("Index");
             }
-            return View(familygroup);
+            else
+            {
+                return View();
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                _familyGroupRepository.Dispose();
+                _familyGroupService.Dispose();
             }
             base.Dispose(disposing);
         }
