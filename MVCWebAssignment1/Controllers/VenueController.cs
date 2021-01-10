@@ -9,139 +9,144 @@ using System.Web.Mvc;
 using MVCWebAssignment1.Customisations;
 using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
+using MVCWebAssignment1.ServiceLayer;
 
 namespace MVCWebAssignment1.Controllers
 {
     public class VenueController : Controller
     {
-        private IVenueRepository _venueRepository;
+        private VenueService _venueService;
 
         public VenueController()
         {
-            _venueRepository = new VenueRepository(new VenueContext());
+            _venueService = new VenueService();
         }
 
         public VenueController(IVenueRepository venueRepository)
         {
-            this._venueRepository = venueRepository;
+            this._venueService = new VenueService(venueRepository);
         }
 
-        // GET: Venues
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Index()
         {
-            return View(_venueRepository.GetVenues());
+            return View(_venueService.GetIndex());
         }
 
-        // GET: Venues/Details/5
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Details(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_venueService.GetDetails(id));
             }
-            Venue venue = _venueRepository.GetVenueById(id);
-
-            if (venue == null)
+            catch (ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-            return View(venue);
+            catch (HttpException ex)
+            {
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
+            }
         }
 
-        // GET: Venues/Create
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Venues/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(Venue venue)
         {
-            if (ModelState.IsValid)
-            {
-                _venueRepository.InsertVenue(venue);
-                _venueRepository.Save();
-                return RedirectToAction("Index");
-            }
 
-            return View(venue);
+            ServiceResponse response = _venueService.CreateAction(venue);
+
+            if (response.Result == true)
+            {
+                return RedirectToAction("Details", "Venue", new { @id = venue.Id});
+            }
+            else
+            {
+                return View(venue);
+            }
         }
 
-        // GET: Venues/Edit/5
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_venueService.EditView(id));
             }
-            Venue venue = _venueRepository.GetVenueById(id);
-            if (venue == null)
+            catch (ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-            return View(venue);
+            catch (HttpException ex)
+            {
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
+            }
         }
 
-        // POST: Venues/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit([Bind(Include = "Id,VenueName,Address")] Venue venue)
         {
-            if (ModelState.IsValid)
+            ServiceResponse response = _venueService.CreateAction(venue);
+
+            if (response.Result == true)
             {
-                _venueRepository.UpdateVenue(venue);
-                _venueRepository.Save();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Venue", new { @id = venue.Id });
             }
-            return View(venue);
+            else
+            {
+                return View(venue);
+            }
         }
 
-        // GET: Venues/Delete/5
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_venueService.DeleteView(id));
             }
-
-            Venue venue = _venueRepository.GetVenueById(id);
-            if (venue == null)
+            catch (ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-            return View(venue);
+            catch (HttpException ex)
+            {
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
+            }
         }
 
-        // POST: Venues/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Venue venue = _venueRepository.GetVenueById(id);
-            _venueRepository.DeleteVenue(venue);
-            _venueRepository.Save();
-            return RedirectToAction("Index");
+            ServiceResponse response = _venueService.DeleteAction(id);
+
+            if (response.Result == true)
+            {
+                return RedirectToAction("Index", "Venue", null);
+            }
+            else
+            {
+                return View();
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                _venueRepository.Dispose();
+                _venueService.Dispose();
             }
             base.Dispose(disposing);
         }

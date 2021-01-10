@@ -254,6 +254,7 @@
     <Compile Include="ServiceLayer\MeetService.cs" />
     <Compile Include="ServiceLayer\RoundService.cs" />
     <Compile Include="ServiceLayer\ServiceResponse.cs" />
+    <Compile Include="ServiceLayer\VenueService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
