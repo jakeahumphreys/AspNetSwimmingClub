@@ -16,9 +16,10 @@ namespace MVCWebAssignment1.Controllers
             return View();
         }
 
-        public ActionResult Error(ErrorType errorType)
+        public ActionResult Error(ErrorType errorType, string message)
         {
             ViewBag.ErrorType = errorType;
+            ViewBag.Message = message ?? "An error has occurred.";
             return View();
         }
     }

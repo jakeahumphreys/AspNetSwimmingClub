@@ -10,6 +10,7 @@ namespace MVCWebAssignment1.Customisations
         Account = 1,
         Authorisation = 2,
         System = 3,
-        NoFamily = 4
+        NoFamily = 4,
+        Service = 5
     }
 }

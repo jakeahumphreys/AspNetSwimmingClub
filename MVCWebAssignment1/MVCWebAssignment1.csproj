@@ -248,6 +248,8 @@
     <Compile Include="Models\RoundViewModel.cs" />
     <Compile Include="Models\Venue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceLayer\EventService.cs" />
+    <Compile Include="ServiceLayer\ServiceResponse.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
