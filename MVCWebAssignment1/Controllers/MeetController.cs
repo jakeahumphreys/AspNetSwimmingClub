@@ -9,213 +9,131 @@ using System.Web.Mvc;
 using MVCWebAssignment1.Customisations;
 using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.Models;
+using MVCWebAssignment1.ServiceLayer;
 
 namespace MVCWebAssignment1.Controllers
 {
     public class MeetController : Controller
     {
-        //private ApplicationDbContext db = new ApplicationDbContext();
 
-        private IMeetRepository _meetRepository;
-        private IVenueRepository _venueRepository;
-        private IEventRepository _eventRepository;
+        private MeetService _meetService;
 
         public MeetController()
         {
-            _meetRepository = new MeetRepository(new MeetContext());
-            _venueRepository = new VenueRepository(new VenueContext());
-            _eventRepository = new EventRepository(new EventContext());
+            _meetService = new MeetService();
         }
 
         public MeetController(IMeetRepository meetRepository, IEventRepository eventRepository, IVenueRepository venueRepository)
         {
-            this._meetRepository = meetRepository;
-            this._eventRepository = eventRepository;
-            this._venueRepository = venueRepository;
+            this._meetService = new MeetService(meetRepository, eventRepository, venueRepository);
         }
 
-        // GET: Meet
         public ActionResult Index(string searchParamDateLower, string searchParamDateUpper)
         {
-            IList<Meet> meets = _meetRepository.GetMeets();
-
-            if(!String.IsNullOrEmpty(searchParamDateLower) && !String.IsNullOrEmpty(searchParamDateUpper))
-            {
-                IList<Meet> updatedMeets = new List<Meet>();
-                DateTime startDate = Convert.ToDateTime(searchParamDateLower);
-                DateTime endDate = Convert.ToDateTime(searchParamDateUpper);
-
-                foreach (var meet in meets)
-                {
-                    DateTime convertedDate = Convert.ToDateTime(meet.Date);
-                   
-                    if(convertedDate >= startDate && convertedDate <= endDate)
-                    {
-                        updatedMeets.Add(meet);
-                    }
-                    
-                }
-
-                meets = updatedMeets;
-            }
-
-            return View(meets);
+            return View(_meetService.GetIndex(searchParamDateLower, searchParamDateUpper));
         }
 
-        // GET: Meet/Details/5
         public ActionResult Details(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_meetService.GetDetails(id));
             }
-            MeetViewModel meetViewModel = new MeetViewModel();
-
-            Meet meet = _meetRepository.GetMeetById(id);
-
-            if (meet == null)
+            catch (ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-
-            //Get Events for this meet
-            List<Event> RelatedEvents = new List<Event>();
-            foreach (var @event in _eventRepository.GetEvents())
+            catch (HttpException ex)
             {
-                if (@event.MeetId != 0)
-                {
-                    if(@event.MeetId == meet.Id)
-                    {
-                        RelatedEvents.Add(@event);
-                    }
-                    
-                }
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-
-            //Add components to ViewModel
-            meetViewModel.Meet = meet;
-            meetViewModel.Events = RelatedEvents;
-
-            //Return View
-            return View(meetViewModel);
         }
 
-        // GET: Meet/Create
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create()
         {
-            MeetViewModel meetViewModel = new MeetViewModel();
-
-            if(_venueRepository != null)
+            try
             {
-                meetViewModel.Venues = _venueRepository.GetVenues();
+                return View(_meetService.CreateView());
             }
-
-
-            return View(meetViewModel);
+            catch (ArgumentException ex)
+            {
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
+            }
+            catch (HttpException ex)
+            {
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
+            }
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create(MeetViewModel meetViewModel)
         {
-            int venueId;
-            int.TryParse(meetViewModel.VenueId, out venueId); //Convert ID from DropDownList to Integer
+            ServiceResponse response = _meetService.CreateAction(meetViewModel);
 
-            //Set ViewModel user's family group to result of a search of family groups by ID
-            //meetViewModel.Meet.Venue = _venueRepository.GetVenues().Where(x => x.Id == venueId).SingleOrDefault();
-            meetViewModel.Meet.VenueId = venueId;
-
-            if (ModelState.IsValid)
+            if (response.Result == true)
             {
-                _meetRepository.InsertMeet(meetViewModel.Meet);
-                _meetRepository.Save();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Meet", new { @id = meetViewModel.Meet.Id });
             }
-
-            return View(meetViewModel);
+            else
+            {
+                return View(response.ServiceObject as MeetViewModel);
+            }
         }
 
         // GET: Meet/Edit/5
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_meetService.EditView(id));
             }
-
-            MeetViewModel meetViewModel = new MeetViewModel();
-
-            Meet meet = _meetRepository.GetMeetById(id);
-
-            if (meet == null)
+            catch (ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-
-            meetViewModel.Meet = meet;
-            meetViewModel.Venues = _venueRepository.GetVenues();
-
-            if (meetViewModel.Meet.VenueId != 0)
+            catch (HttpException ex)
             {
-                meetViewModel.VenueId = meetViewModel.Meet.VenueId.ToString();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-
-
-            return View(meetViewModel);
         }
 
-        // POST: Meet/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Edit(MeetViewModel meetViewModel)
         {
-            int venueId;
-            int.TryParse(meetViewModel.VenueId, out venueId); //Convert ID from DropDownList to Integer
+            ServiceResponse response = _meetService.EditAction(meetViewModel);
 
-            //Set ViewModel user's family group to result of a search of family groups by ID
-            //meetViewModel.Meet.Venue = _venueRepository.GetVenues().Where(x => x.Id == venueId).SingleOrDefault();
-            meetViewModel.Meet.VenueId = venueId;
-
-
-            //load existing meet from database
-            Meet meet = _meetRepository.GetMeetById(meetViewModel.Meet.Id);
-
-            //Set new properties from model
-            meet.VenueId= meetViewModel.Meet.VenueId;
-            meet.MeetName = meetViewModel.Meet.MeetName;
-            meet.Date = meetViewModel.Meet.Date;
-            meet.PoolLength = meetViewModel.Meet.PoolLength;
-
-            if (ModelState.IsValid)
+            if (response.Result == true)
             {
-                _meetRepository.UpdateMeet(meet);
-                _meetRepository.Save();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Meet", new { @id = meetViewModel.Meet.Id });
             }
-            return View(meetViewModel);
+            else
+            {
+                return View(response.ServiceObject as MeetViewModel);
+            }
         }
 
         // GET: Meet/Delete/5
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
-            if (id == 0)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(_meetService.DeleteView(id));
             }
-            Meet meet = _meetRepository.GetMeetById(id);
-            if (meet == null)
+            catch (ArgumentException ex)
             {
-                return HttpNotFound();
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
             }
-            return View(meet);
+            catch (HttpException ex)
+            {
+                return RedirectToAction("Error", "Error", new { errorType = ErrorType.Service, message = ex.Message });
+            }
         }
 
         // POST: Meet/Delete/5
@@ -224,30 +142,23 @@ namespace MVCWebAssignment1.Controllers
         [CustomAuthorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Meet meet = _meetRepository.GetMeetById(id);
-            foreach (var item in _eventRepository.GetEvents())
-            {
-                if (item.Meet != null)
-                {
-                    if (item.Meet.Id == id)
-                    {
-                        _eventRepository.DeleteEvent(item);
-                    }
-                }
+            ServiceResponse response = _meetService.DeleteAction(id);
 
+            if (response.Result == true)
+            {
+                return RedirectToAction("Index", "Meet", null);
             }
-            _meetRepository.DeleteMeet(meet);
-            _meetRepository.Save();
-            return RedirectToAction("Index");
+            else
+            {
+                return View();
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                _meetRepository.Dispose();
-                _eventRepository.Dispose();
-                _venueRepository.Dispose();
+                _meetService.Dispose();
             }
             base.Dispose(disposing);
         }
