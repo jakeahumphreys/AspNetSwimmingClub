@@ -179,6 +179,7 @@
     <Compile Include="Controllers\RoundController.cs" />
     <Compile Include="Controllers\VenueController.cs" />
     <Compile Include="Customisations\CustomAuthorize.cs" />
+    <Compile Include="Customisations\CustomHandleErrorAttribute.cs" />
     <Compile Include="Customisations\ErrorType.cs" />
     <Compile Include="DAL\EventRepository.cs" />
     <Compile Include="DAL\FamilyGroupContext.cs" />
