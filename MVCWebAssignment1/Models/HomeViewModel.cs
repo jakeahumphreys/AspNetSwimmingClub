@@ -10,5 +10,6 @@ namespace MVCWebAssignment1.Models
         public IList<Event> Events { get; set; }
         public IList<Event> PersonalEvents { get; set; }
         public IList<Lane> EventLanes { get; set; }
+        public int FamilyGroupId { get; set; }
     }
 }

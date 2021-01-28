@@ -4,21 +4,25 @@ using MVCWebAssignment1.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Web;
 using System.Web.Mvc;
+using MVCWebAssignment1.Common_Logic;
 
 namespace MVCWebAssignment1.Controllers
 {
     public class HomeController : Controller
     {
 
-        private IEventRepository _eventRepository;
+        private readonly IEventRepository _eventRepository;
         private ILaneRepository _laneRepository;
+        private Library _library;
 
         public HomeController()
         {
             _eventRepository = new EventRepository(new EventContext());
             _laneRepository = new LaneRepository(new LaneContext());
+            _library = new Library();
         }
 
 
@@ -49,6 +53,16 @@ namespace MVCWebAssignment1.Controllers
 
             HomeViewModel homeViewModel = new HomeViewModel();
             homeViewModel.Events = events;
+
+            if (User.IsInRole("Parent"))
+            {
+                var familyGroupId = _library.GetFamilyId(User.Identity.GetUserId());
+
+                if (familyGroupId != 0)
+                {
+                    homeViewModel.FamilyGroupId = familyGroupId;
+                }
+            }
 
             string swimmerId = User.Identity.GetUserId();
 

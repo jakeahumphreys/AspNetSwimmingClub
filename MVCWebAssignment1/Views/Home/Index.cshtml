@@ -1,4 +1,6 @@
-﻿@model MVCWebAssignment1.Models.HomeViewModel
+﻿@using System.Data.Entity.Core.Mapping
+@using System.Web.UI.WebControls
+@model MVCWebAssignment1.Models.HomeViewModel
 
 @{
     ViewBag.Title = "Home Page";
@@ -57,7 +59,7 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Meet.MeetName)
+                        @Html.ActionLink(item.Meet.MeetName, "Details","Meet", new { id = item.Meet.Id },null)
                         (@Html.DisplayFor(modelItem => item.Meet.Date))
                     </td>
                     <td>
@@ -88,8 +90,36 @@
                                         <b>Round @round.RoundNumber</b>
                                         @foreach (var lane in round.Lanes)
                                         {
-                                            <p>Lane @lane.LaneNumber - @lane.Swimmer.Name</p>
-                                        }
+                                            if (Request.IsAuthenticated)
+                                            {
+                                                if (User.IsInRole("Admin"))
+                                                {
+                                                    <p>Lane @lane.LaneNumber - @Html.ActionLink(lane.Swimmer.Name, "Details", "Account", new{id = lane.SwimmerId}, null)</p>
+                                                }
+                                                if (User.IsInRole("Parent"))
+                                                {
+                                                    if (Model.FamilyGroupId != 0)
+                                                    {
+                                                        if (lane.Swimmer.FamilyGroupId == Model.FamilyGroupId)
+                                                        {
+                                                            <p>Lane @lane.LaneNumber - @Html.ActionLink(lane.Swimmer.Name, "Details", "Account", new{id = lane.SwimmerId}, null)</p>
+                                                        }
+                                                        else
+                                                        {
+                                                            <p>Lane @lane.LaneNumber - @lane.Swimmer.Name</p>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <p>Lane @lane.LaneNumber - @lane.Swimmer.Name</p>
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <p>Lane @lane.LaneNumber - @lane.Swimmer.Name</p>
+                                            }
+                                        } 
                                     </div>
                                 }
                                 else
@@ -144,7 +174,7 @@
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Meet.MeetName)
+                            @Html.ActionLink(item.Meet.MeetName, "Details","Meet", new { id = item.Meet.Id },null)
                             (@Html.DisplayFor(modelItem => item.Meet.Date))
                         </td>
                         <td>

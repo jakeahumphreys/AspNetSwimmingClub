@@ -144,9 +144,14 @@ namespace MVCWebAssignment1.Controllers
             }
             
             ApplicationUser applicationUser = _context.Users.Find(id);
-            FamilyGroup familyGroup = _familyGroupRepository.GetFamilyGroupById((int)applicationUser.FamilyGroupId);
-            ViewBag.FamilyGroupName = familyGroup.GroupName;
-           
+            var familyGroupId = applicationUser.FamilyGroupId;
+
+            if (familyGroupId != null)
+            {
+                FamilyGroup familyGroup = _familyGroupRepository.GetFamilyGroupById(applicationUser.FamilyGroupId.Value);
+                ViewBag.FamilyGroupName = familyGroup.GroupName;
+            }
+
             if (applicationUser == null)
             {
                 return HttpNotFound();
