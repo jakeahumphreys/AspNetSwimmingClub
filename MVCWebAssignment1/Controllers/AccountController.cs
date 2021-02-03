@@ -156,8 +156,11 @@ namespace MVCWebAssignment1.Controllers
             {
                 return HttpNotFound();
             }
+
             return View(applicationUser);
         }
+
+
 
         // GET: DeleteMe/Edit/5
         [CustomAuthorize(Roles = "Parent,Admin")]
@@ -353,6 +356,7 @@ namespace MVCWebAssignment1.Controllers
             return View();
         }
 
+
         //
         // POST: /Account/Register
         [HttpPost]
@@ -361,7 +365,6 @@ namespace MVCWebAssignment1.Controllers
         [CustomAuthorize(Roles = "Admin")]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            Debug.WriteLine("Saving!");
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { Name = model.Name, Gender = model.Gender, Address = model.Address, DateOfBirth = model.DateOfBirth, PhoneNumber = model.PhoneNumber, IsAllowedToSwim = model.IsAllowedToSwim, UserName = model.Email, Email = model.Email };

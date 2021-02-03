@@ -9,7 +9,7 @@ namespace MVCWebAssignment1.ServiceLayer
 {
     public class VenueService
     {
-        private IVenueRepository _venueRepository;
+        private readonly IVenueRepository _venueRepository;
 
         public VenueService()
         {

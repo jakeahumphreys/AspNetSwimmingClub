@@ -20,6 +20,13 @@ namespace MVCWebAssignment1.Models
             return userIdentity;
         }
 
+        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager,
+            string authenticationType)
+        {
+            var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
+            return userIdentity;
+        }
+
         [Display(Name = "Name")]
         public string Name { get; set; }
         [Display(Name = "Gender")]

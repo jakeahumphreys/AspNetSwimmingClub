@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCWebAssignment1", ".\MVCWebAssignment1\MVCWebAssignment1.csproj", "{BADE600C-02D7-45FA-9DFC-9E81B6BD170A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCWebAssignment1", "MVCWebAssignment1\MVCWebAssignment1.csproj", "{BADE600C-02D7-45FA-9DFC-9E81B6BD170A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCWebAssignmentTests", ".\MVCWebAssignmentTests\MVCWebAssignmentTests.csproj", "{4CA21DF5-342A-4E6F-919D-52E24B1CACF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCWebAssignmentTests", "MVCWebAssignmentTests\MVCWebAssignmentTests.csproj", "{4CA21DF5-342A-4E6F-919D-52E24B1CACF0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
