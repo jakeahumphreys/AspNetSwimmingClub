@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -104,5 +105,98 @@ namespace MVCWebAssignment1.Api
                 return BadRequest();
             }
         }
+
+        [HttpPatch]
+        [Authorize(Roles = "Admin, Parent")]
+        public IHttpActionResult Patch([FromBody] ApplicationUser user)
+        {
+            if (user != null)
+            {
+                var currentUser = _applicationDbContext.Users.Find(User.Identity.GetUserId());
+                var newUser = _applicationDbContext.Users.Find(user.Id);
+
+                if (newUser != null)
+                {
+                    if (User.IsInRole("Admin"))
+                    {
+                        if (user.Name != null && user.Name != newUser.Name)
+                        {
+                            newUser.Name = user.Name;
+
+                            _applicationDbContext.Entry(newUser).State = EntityState.Modified;
+                            _applicationDbContext.SaveChanges();
+
+                            return Content(HttpStatusCode.OK, "User Name updated.");
+                        }
+                        else if (user.FamilyGroupId != null && user.FamilyGroupId != newUser.FamilyGroupId)
+                        {
+                            newUser.FamilyGroupId = user.FamilyGroupId;
+
+                            _applicationDbContext.Entry(newUser).State = EntityState.Modified;
+                            _applicationDbContext.SaveChanges();
+
+                            return Content(HttpStatusCode.OK, "User Family updated.");
+                        }
+                        else if (user.LockoutEndDateUtc != newUser.LockoutEndDateUtc)
+                        {
+                            newUser.LockoutEndDateUtc = user.LockoutEndDateUtc;
+
+                            _applicationDbContext.Entry(newUser).State = EntityState.Modified;
+                            _applicationDbContext.SaveChanges();
+
+                            if (newUser.LockoutEndDateUtc != null)
+                            {
+                                return Content(HttpStatusCode.OK, "User has been archived and can no longer login.");
+                            }
+                            else
+                            {
+                                return Content(HttpStatusCode.OK, "User is no longer archived and can now login.");
+                            }
+
+                        }
+                        else
+                        {
+                            return Content(HttpStatusCode.BadRequest, "No name or family group was submitted");
+                        }
+                        
+                    }
+                    else
+                    {
+
+                        if (currentUser.FamilyGroupId == user.FamilyGroupId)
+                        {
+                            if (user.PhoneNumber != null && user.PhoneNumber != newUser.PhoneNumber)
+                            {
+                                newUser.PhoneNumber = user.PhoneNumber;
+
+                                _applicationDbContext.Entry(newUser).State = EntityState.Modified;
+                                _applicationDbContext.SaveChanges();
+
+                                return Content(HttpStatusCode.OK, "User Phone Number updated.");
+                            }
+                            else
+                            {
+                                return Content(HttpStatusCode.BadRequest, "No new phone number was submitted.");
+                            }
+                        }
+                        else
+                        {
+                            return Content(HttpStatusCode.Unauthorized, "You do not have permission to edit this user.");
+                        }
+
+                    }
+                }
+                else
+                {
+                    return Content(HttpStatusCode.NotFound, "No user was found matching the submitted data.");
+                }
+            }
+            else
+            {
+                return Content(HttpStatusCode.BadRequest, "No data was submitted.");
+            }
+
+        }
+
     }
 }

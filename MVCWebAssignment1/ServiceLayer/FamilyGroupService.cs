@@ -9,8 +9,8 @@ namespace MVCWebAssignment1.ServiceLayer
 {
     public class FamilyGroupService
     {
-        private IFamilyGroupRepository _familyGroupRepository;
-        private ApplicationDbContext _applicationUserContext;
+        private readonly IFamilyGroupRepository _familyGroupRepository;
+        private readonly ApplicationDbContext _applicationUserContext;
 
         public FamilyGroupService()
         {
@@ -34,7 +34,6 @@ namespace MVCWebAssignment1.ServiceLayer
             {
                 throw new ArgumentException("Expected integer");
             }
-
 
             //Create View Model
             FamilyGroupViewModel familyGroupViewModel = new FamilyGroupViewModel();
@@ -73,10 +72,18 @@ namespace MVCWebAssignment1.ServiceLayer
 
         public ServiceResponse CreateAction(FamilyGroup familyGroup)
         {
-            _familyGroupRepository.InsertFamilyGroup(familyGroup);
-            _familyGroupRepository.Save();
+            if (familyGroup != null && familyGroup.GroupName != null)
+            {
+                _familyGroupRepository.InsertFamilyGroup(familyGroup);
+                _familyGroupRepository.Save();
 
-            return new ServiceResponse { Result = true };
+                return new ServiceResponse { Result = true };
+
+            }
+            else
+            {
+                return new ServiceResponse { Result = false };
+            }
         }
 
         public void Dispose()
