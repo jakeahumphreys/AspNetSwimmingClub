@@ -41,7 +41,7 @@ namespace MVCWebAssignment1.Api
         // POST: api/Meet
         public IHttpActionResult Post([FromBody]MeetDto request)
         {
-            if (!string.IsNullOrEmpty(request.ToString()))
+            if (request != null)
             {
                 var meet = mapper.Map<MeetDto, Meet>(request);
                 var meetVm = new MeetViewModel {Meet = meet, VenueId = meet.VenueId.ToString()};

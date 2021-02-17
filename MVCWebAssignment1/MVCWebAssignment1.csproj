@@ -215,8 +215,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\AccountController.cs" />
+    <Compile Include="Api\EventController.cs" />
     <Compile Include="Api\FamilyGroupController.cs" />
     <Compile Include="Api\MeetController.cs" />
+    <Compile Include="Api\RoundController.cs" />
     <Compile Include="Api\VenueController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />

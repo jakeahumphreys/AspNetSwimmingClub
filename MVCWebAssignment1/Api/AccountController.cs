@@ -207,7 +207,7 @@ namespace MVCWebAssignment1.Api
         [Authorize(Roles="Admin")]
         [Route("api/account/lockout")]
         [HttpPatch]
-        public IHttpActionResult Toggle([FromBody] ApplicationUserDto request)
+        public IHttpActionResult Lockout([FromBody] ApplicationUserDto request)
         {
             if (!string.IsNullOrEmpty(request.ToString()))
             {

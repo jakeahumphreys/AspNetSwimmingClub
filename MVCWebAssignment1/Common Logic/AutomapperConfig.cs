@@ -21,9 +21,12 @@ namespace FYP_WebApp.Common_Logic
             CreateMap<Round, RoundDto>();
             CreateMap<Lane, LaneDto>();
 
-            //Otherway
+            //Other way
             CreateMap<MeetDto, Meet>();
             CreateMap<ApplicationUserDto, ApplicationUser>();
+            CreateMap<EventDto, Event>();
+            CreateMap<RoundDto, Round>();
+            CreateMap<LaneDto, Lane>();
         }
     }
 
