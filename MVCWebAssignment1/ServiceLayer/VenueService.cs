@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using MVCWebAssignment1.Customisations;
 
 namespace MVCWebAssignment1.ServiceLayer
 {
@@ -32,11 +33,11 @@ namespace MVCWebAssignment1.ServiceLayer
             {
                 throw new ArgumentException("Expected integer");
             }
-            Venue venue = _venueRepository.GetVenueById(id);
+            var venue = _venueRepository.GetVenueById(id);
 
             if (venue == null)
             {
-                throw new HttpException("Venue not found");
+                throw new VenueNotFoundException("Venue not found");
             }
             return venue;
         }
@@ -66,7 +67,7 @@ namespace MVCWebAssignment1.ServiceLayer
 
             if (venue == null)
             {
-                throw new HttpException("Venue not found");
+                throw new VenueNotFoundException("Venue not found.");
             }
             return venue;
         }
@@ -96,7 +97,7 @@ namespace MVCWebAssignment1.ServiceLayer
 
             if (venue == null)
             {
-                throw new HttpException("Venue not found");
+                throw new VenueNotFoundException("Venue not found.");
             }
             return venue;
         }

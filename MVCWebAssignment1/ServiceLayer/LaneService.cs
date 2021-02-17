@@ -9,8 +9,8 @@ namespace MVCWebAssignment1.ServiceLayer
 {
     public class LaneService
     {
-        private ILaneRepository _laneRepository;
-        private ApplicationDbContext _applicationDbContext;
+        private readonly ILaneRepository _laneRepository;
+        private readonly ApplicationDbContext _applicationDbContext;
 
         public LaneService()
         {

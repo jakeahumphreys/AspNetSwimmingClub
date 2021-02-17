@@ -17,7 +17,7 @@ namespace MVCWebAssignment1.DAL
         }
         public IList<Meet> GetMeets()
         {
-            return _context.Meets.Include(x => x.Venue).Include(x => x.Events).ToList();
+            return _context.Meets.Include(x => x.Venue).Include(x => x.Events).Include(x => x.Events.Select(y => y.Rounds.Select(z=> z.Lanes.Select(q => q.Swimmer)))).ToList();
         }
 
         public Meet GetMeetById(int id)

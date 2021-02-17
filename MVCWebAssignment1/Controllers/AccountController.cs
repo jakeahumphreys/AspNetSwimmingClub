@@ -352,7 +352,6 @@ namespace MVCWebAssignment1.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            Debug.WriteLine("View opened!");
             return View();
         }
 

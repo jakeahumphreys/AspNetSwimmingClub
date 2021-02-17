@@ -7,7 +7,11 @@ using System.Net.Http;
 using System.Web.Http;
 using MVCWebAssignment1.ServiceLayer;
 using System.Text.Json;
+using AutoMapper;
+using FYP_WebApp.Common_Logic;
 using Microsoft.Ajax.Utilities;
+using MVCWebAssignment1.Customisations;
+using MVCWebAssignment1.DTO;
 using MVCWebAssignment1.Models;
 
 namespace MVCWebAssignment1.Api
@@ -15,18 +19,20 @@ namespace MVCWebAssignment1.Api
     public class VenueController : ApiController
     {
         private readonly VenueService _venueService;
+        private Mapper mapper;
 
         public VenueController()
         {
             _venueService = new VenueService();
+            var config = AutomapperConfig.instance().Configure();
+            mapper = new Mapper(config);
         }
 
         [HttpGet]
         [Authorize]
         public IHttpActionResult Get()
         {
-            
-            var venues = _venueService.GetIndex();
+            var venues = mapper.Map <IList<Venue>, List<VenueDto>>(_venueService.GetIndex());
             if (venues.Count > 0)
             {
                 return Json(venues);
@@ -37,20 +43,21 @@ namespace MVCWebAssignment1.Api
             }
         }
 
-        [Route("GetById")]
         [HttpGet]
         [Authorize]
         public IHttpActionResult Get(int id)
         {
-            var venue = _venueService.GetDetails(id);
-
-            if (venue != null)
+            try
             {
-                return Json(venue);
+                return Json(mapper.Map<Venue, VenueDto>(_venueService.GetDetails(id)));
             }
-            else
+            catch (ArgumentException)
             {
-                return NotFound();
+                return Content(HttpStatusCode.BadRequest, "No ID was provided.");
+            }
+            catch (VenueNotFoundException)
+            {
+                return Content(HttpStatusCode.NotFound, "A Venue with the specified ID was not found.");
             }
         }
 
@@ -72,7 +79,8 @@ namespace MVCWebAssignment1.Api
             }
             else
             {
-                return BadRequest();
+                return Content(HttpStatusCode.BadRequest,
+                    "No data was provided to create a venue. Please check your submission.");
             }
         }
 

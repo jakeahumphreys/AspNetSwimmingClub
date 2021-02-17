@@ -7,9 +7,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Web.UI.WebControls;
 using System.Web.WebSockets;
+using AutoMapper;
+using FYP_WebApp.Common_Logic;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using MVCWebAssignment1.DTO;
 using MVCWebAssignment1.Models;
 
 namespace MVCWebAssignment1.Api
@@ -19,11 +23,14 @@ namespace MVCWebAssignment1.Api
         private readonly ApplicationDbContext _applicationDbContext;
         private Controllers.AccountController _accountController;
         private ApplicationUserManager _userManager;
+        private Mapper mapper;
 
         public AccountController()
         {
             _applicationDbContext = new ApplicationDbContext();
             _accountController = new Controllers.AccountController();
+            var config = AutomapperConfig.instance().Configure();
+            mapper = new Mapper(config);
         }
 
 
@@ -43,7 +50,7 @@ namespace MVCWebAssignment1.Api
         [Authorize(Roles = "Admin")]
         public IHttpActionResult Get()
         {
-            var users = _applicationDbContext.Users.ToList();
+            var users = mapper.Map<IList<ApplicationUser>, List<ApplicationUserDto>>(_applicationDbContext.Users.ToList());
 
             if (users.Count > 0)
             {
@@ -65,16 +72,16 @@ namespace MVCWebAssignment1.Api
 
                 if (user != null)
                 {
-                    return Json(user);
+                    return Json(mapper.Map<ApplicationUser, ApplicationUserDto>(user));
                 }
                 else
                 {
-                    return NotFound();
+                    return Content(HttpStatusCode.NotFound, "A user with the specified ID was not found.");
                 }
             }
             else
             {
-                return BadRequest();
+                return Content(HttpStatusCode.BadRequest, "No ID was provided.");
             }
         }
 
@@ -108,68 +115,67 @@ namespace MVCWebAssignment1.Api
 
         [HttpPatch]
         [Authorize(Roles = "Admin, Parent")]
-        public IHttpActionResult Patch([FromBody] ApplicationUser user)
+        public IHttpActionResult Patch([FromBody] ApplicationUserDto request)
         {
+            if (request == null)
+            {
+                return Content(HttpStatusCode.BadRequest, "Request invalid, check submitted data.");
+            }
+
+            var user = mapper.Map<ApplicationUserDto, ApplicationUser>(request);
+
             if (user != null)
             {
                 var currentUser = _applicationDbContext.Users.Find(User.Identity.GetUserId());
-                var newUser = _applicationDbContext.Users.Find(user.Id);
 
-                if (newUser != null)
+                var existingUser = _applicationDbContext.Users.Find(user.Id);
+
+                if (existingUser != null)
                 {
                     if (User.IsInRole("Admin"))
                     {
-                        if (user.Name != null && user.Name != newUser.Name)
-                        {
-                            newUser.Name = user.Name;
+                        List<string> actionsPerformed = new List<string>();
 
-                            _applicationDbContext.Entry(newUser).State = EntityState.Modified;
+                        if (user.Name != null && user.Name != existingUser.Name)
+                        {
+                            var oldName = existingUser.Name;
+                            existingUser.Name = user.Name;
+
+                            _applicationDbContext.Entry(existingUser).State = EntityState.Modified;
                             _applicationDbContext.SaveChanges();
 
-                            return Content(HttpStatusCode.OK, "User Name updated.");
+                            actionsPerformed.Add("Name updated from " + oldName + " to " + existingUser.Name);
                         }
-                        else if (user.FamilyGroupId != null && user.FamilyGroupId != newUser.FamilyGroupId)
+                        if (user.FamilyGroupId != null && user.FamilyGroupId != existingUser.FamilyGroupId)
                         {
-                            newUser.FamilyGroupId = user.FamilyGroupId;
+                            existingUser.FamilyGroupId = user.FamilyGroupId;
 
-                            _applicationDbContext.Entry(newUser).State = EntityState.Modified;
+                            _applicationDbContext.Entry(existingUser).State = EntityState.Modified;
                             _applicationDbContext.SaveChanges();
 
-                            return Content(HttpStatusCode.OK, "User Family updated.");
+                            actionsPerformed.Add("User family group updated");
                         }
-                        else if (user.LockoutEndDateUtc != newUser.LockoutEndDateUtc)
+
+                        if (actionsPerformed.Count > 0)
                         {
-                            newUser.LockoutEndDateUtc = user.LockoutEndDateUtc;
-
-                            _applicationDbContext.Entry(newUser).State = EntityState.Modified;
-                            _applicationDbContext.SaveChanges();
-
-                            if (newUser.LockoutEndDateUtc != null)
-                            {
-                                return Content(HttpStatusCode.OK, "User has been archived and can no longer login.");
-                            }
-                            else
-                            {
-                                return Content(HttpStatusCode.OK, "User is no longer archived and can now login.");
-                            }
-
+                            return Json(actionsPerformed);
                         }
                         else
                         {
-                            return Content(HttpStatusCode.BadRequest, "No name or family group was submitted");
+                            return Content(HttpStatusCode.BadGateway, "No changes were specified so none were made.");
                         }
-                        
+
                     }
                     else
                     {
 
                         if (currentUser.FamilyGroupId == user.FamilyGroupId)
                         {
-                            if (user.PhoneNumber != null && user.PhoneNumber != newUser.PhoneNumber)
+                            if (user.PhoneNumber != null && user.PhoneNumber != existingUser.PhoneNumber)
                             {
-                                newUser.PhoneNumber = user.PhoneNumber;
+                                existingUser.PhoneNumber = user.PhoneNumber;
 
-                                _applicationDbContext.Entry(newUser).State = EntityState.Modified;
+                                _applicationDbContext.Entry(existingUser).State = EntityState.Modified;
                                 _applicationDbContext.SaveChanges();
 
                                 return Content(HttpStatusCode.OK, "User Phone Number updated.");
@@ -197,6 +203,49 @@ namespace MVCWebAssignment1.Api
             }
 
         }
+
+        [Authorize(Roles="Admin")]
+        [Route("api/account/lockout")]
+        [HttpPatch]
+        public IHttpActionResult Toggle([FromBody] ApplicationUserDto request)
+        {
+            if (!string.IsNullOrEmpty(request.ToString()))
+            {
+                var existingUser = _applicationDbContext.Users.Find(request.Id);
+
+                if (existingUser != null)
+                {
+                    if (existingUser.LockoutEndDateUtc != request.LockoutEndDateUtc)
+                    {
+                        if (request.LockoutEndDateUtc == DateTime.MinValue)
+                        {
+                            existingUser.LockoutEndDateUtc = null;
+                        }
+                        else
+                        {
+                            existingUser.LockoutEndDateUtc = request.LockoutEndDateUtc;
+                        }
+
+                        _applicationDbContext.Entry(existingUser).State = EntityState.Modified;
+                        _applicationDbContext.SaveChanges();
+                        return Content(HttpStatusCode.OK, "User lock out date set to: " + request.LockoutEndDateUtc);
+                    }
+                    else
+                    {
+                        return Content(HttpStatusCode.BadRequest, "No changes specified so none were made");
+                    }
+                }
+                else
+                {
+                    return Content(HttpStatusCode.NotFound, "The user with the specified ID was not found.");
+                }
+            }
+            else
+            {
+                return Content(HttpStatusCode.BadRequest, "No data was submitted.");
+            }
+        }
+
 
     }
 }

@@ -4,7 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using AutoMapper;
+using FYP_WebApp.Common_Logic;
 using Microsoft.Owin.Security.Facebook;
+using MVCWebAssignment1.DTO;
 using MVCWebAssignment1.Models;
 using MVCWebAssignment1.ServiceLayer;
 
@@ -14,11 +17,14 @@ namespace MVCWebAssignment1.Api
     {
         private readonly FamilyGroupService _familyGroupService;
         private readonly ApplicationDbContext _applicationDbContext;
+        private Mapper mapper;
 
         public FamilyGroupController()
         {
             _familyGroupService = new FamilyGroupService();
             _applicationDbContext = new ApplicationDbContext();
+            var config = AutomapperConfig.instance().Configure();
+            mapper = new Mapper(config);
         }
 
         [HttpGet]
@@ -50,7 +56,7 @@ namespace MVCWebAssignment1.Api
                         }
                         else
                         {
-                            return Json(familyUsers);
+                            return Json(mapper.Map<IList<ApplicationUser>, List<ApplicationUserDto>>(familyUsers));
                         }
                     }
                 }
