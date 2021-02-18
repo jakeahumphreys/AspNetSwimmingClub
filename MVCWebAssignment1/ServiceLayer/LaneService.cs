@@ -79,10 +79,15 @@ namespace MVCWebAssignment1.ServiceLayer
 
         public ServiceResponse CreateAction(LaneViewModel laneViewModel)
         {
-            laneViewModel.Lane.RoundId = laneViewModel.RoundId;
-            laneViewModel.Lane.LaneNumber = _laneRepository.GetLanes().Where(x => x.RoundId == laneViewModel.RoundId).ToList().Count + 1;
-            laneViewModel.Lane.SwimmerId = laneViewModel.UserId;
-            _laneRepository.InsertLane(laneViewModel.Lane);
+            var lane = new Lane
+            {
+                RoundId = laneViewModel.RoundId,
+                LaneNumber = _laneRepository.GetLanes().Where(x => x.RoundId == laneViewModel.RoundId).ToList().Count + 1,
+                SwimmerId = laneViewModel.UserId
+        };
+
+          
+            _laneRepository.InsertLane(lane);
             _laneRepository.Save();
 
             return new ServiceResponse { Result = true };

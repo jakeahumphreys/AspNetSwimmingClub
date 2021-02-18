@@ -11,6 +11,7 @@ using AutoMapper;
 using FYP_WebApp.Common_Logic;
 using Microsoft.Ajax.Utilities;
 using MVCWebAssignment1.Customisations;
+using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.DTO;
 using MVCWebAssignment1.Models;
 
@@ -24,6 +25,13 @@ namespace MVCWebAssignment1.Api
         public VenueController()
         {
             _venueService = new VenueService();
+            var config = AutomapperConfig.instance().Configure();
+            mapper = new Mapper(config);
+        }
+
+        public VenueController(IVenueRepository venueRepository)
+        {
+            _venueService = new VenueService(venueRepository);
             var config = AutomapperConfig.instance().Configure();
             mapper = new Mapper(config);
         }
@@ -70,11 +78,12 @@ namespace MVCWebAssignment1.Api
 
                 if (result.Result == true)
                 {
-                    return Ok();
+                    return Content(HttpStatusCode.OK, "Venue added successfully.");
                 }
                 else
                 {
-                    return BadRequest();
+                    return Content(HttpStatusCode.InternalServerError,
+                        "Venue not added as the service returned an unsuccessful response.");
                 }
             }
             else

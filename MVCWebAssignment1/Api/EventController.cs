@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Controllers;
 using AutoMapper;
 using FYP_WebApp.Common_Logic;
+using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.DTO;
 using MVCWebAssignment1.Models;
 using MVCWebAssignment1.ServiceLayer;
@@ -21,6 +22,13 @@ namespace MVCWebAssignment1.Api
         public EventController()
         {
             _eventService = new EventService();
+            var config = AutomapperConfig.instance().Configure();
+            _mapper = new Mapper(config);
+        }
+
+        public EventController(IEventRepository eventRepository, IMeetRepository meetRepository, IRoundRepository roundRepository)
+        {
+            _eventService = new EventService(eventRepository, meetRepository, roundRepository);
             var config = AutomapperConfig.instance().Configure();
             _mapper = new Mapper(config);
         }

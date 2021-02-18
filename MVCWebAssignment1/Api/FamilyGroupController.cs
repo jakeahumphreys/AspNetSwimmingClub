@@ -7,6 +7,7 @@ using System.Web.Http;
 using AutoMapper;
 using FYP_WebApp.Common_Logic;
 using Microsoft.Owin.Security.Facebook;
+using MVCWebAssignment1.DAL;
 using MVCWebAssignment1.DTO;
 using MVCWebAssignment1.Models;
 using MVCWebAssignment1.ServiceLayer;
@@ -23,6 +24,14 @@ namespace MVCWebAssignment1.Api
         {
             _familyGroupService = new FamilyGroupService();
             _applicationDbContext = new ApplicationDbContext();
+            var config = AutomapperConfig.instance().Configure();
+            mapper = new Mapper(config);
+        }
+
+        public FamilyGroupController(IFamilyGroupRepository familyGroupRepository, ApplicationDbContext applicationDbContext)
+        {
+            _familyGroupService = new FamilyGroupService(familyGroupRepository);
+            _applicationDbContext = applicationDbContext;
             var config = AutomapperConfig.instance().Configure();
             mapper = new Mapper(config);
         }

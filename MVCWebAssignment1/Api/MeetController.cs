@@ -26,19 +26,20 @@ namespace MVCWebAssignment1.Api
             mapper = new Mapper(config);
         }
 
+        public MeetController(IMeetRepository meetRepository, IEventRepository eventRepository, IVenueRepository venueRepository)
+        {
+            _meetService = new MeetService(meetRepository, eventRepository, venueRepository);
+            var config = AutomapperConfig.instance().Configure();
+            mapper = new Mapper(config);
+        }
+
         [HttpGet]
         public IEnumerable<MeetDto> Get()
         {
             return mapper.Map<IList<Meet>, List<MeetDto>>(_meetService.GetIndex(null,null));
         }
 
-        [HttpGet]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST: api/Meet
+        [HttpPost]
         public IHttpActionResult Post([FromBody]MeetDto request)
         {
             if (request != null)
@@ -61,17 +62,6 @@ namespace MVCWebAssignment1.Api
             {
                 return Content(HttpStatusCode.BadRequest, "Invalid data submitted.");
             }
-        }
-
-        // PUT: api/Meet/5
-        public IHttpActionResult Put(int id, [FromBody]MeetDto request)
-        {
-            return BadRequest();
-        }
-
-        // DELETE: api/Meet/5
-        public void Delete(int id)
-        {
         }
     }
 }

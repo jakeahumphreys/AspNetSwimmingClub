@@ -157,6 +157,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API_Tests\SwimmerDashboardTest.cs" />
+    <Compile Include="API_Tests\EventControllerTest.cs" />
+    <Compile Include="API_Tests\MeetControllerTest.cs" />
+    <Compile Include="API_Tests\LaneControllerTest.cs" />
+    <Compile Include="API_Tests\RoundControllerTest.cs" />
+    <Compile Include="API_Tests\FamilyGroupControllerTest.cs" />
+    <Compile Include="API_Tests\VenueControllerTest.cs" />
     <Compile Include="EventControllerTest.cs" />
     <Compile Include="FamilyGroupControllerTest.cs" />
     <Compile Include="LaneControllerTest.cs" />
@@ -175,6 +182,7 @@
       <Name>MVCWebAssignment1</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
