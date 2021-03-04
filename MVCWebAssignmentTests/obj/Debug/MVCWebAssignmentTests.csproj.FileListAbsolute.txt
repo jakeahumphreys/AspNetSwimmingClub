@@ -159,3 +159,5 @@ C:\Users\Jake\source\repos\MVCWebAssignment1\MVCWebAssignmentTests\bin\Debug\Sys
 C:\Users\Jake\source\repos\MVCWebAssignment1\MVCWebAssignmentTests\bin\Debug\System.Web.Http.xml
 C:\Users\Jake\source\repos\MVCWebAssignment1\MVCWebAssignmentTests\bin\Debug\System.Web.Http.Owin.xml
 C:\Users\Jake\source\repos\MVCWebAssignment1\MVCWebAssignmentTests\bin\Debug\System.Web.Http.WebHost.xml
+C:\Users\Jake\source\repos\MVCWebAssignment1\MVCWebAssignmentTests\bin\Debug\WebActivatorEx.dll
+C:\Users\Jake\source\repos\MVCWebAssignment1\MVCWebAssignmentTests\bin\Debug\Swashbuckle.Core.dll
