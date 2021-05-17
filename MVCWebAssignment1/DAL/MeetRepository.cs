@@ -22,7 +22,7 @@ namespace MVCWebAssignment1.DAL
 
         public Meet GetMeetById(int id)
         {
-            return _context.Meets.Where(x => x.Id == id).Include(x => x.Venue).Include(x => x.Events).SingleOrDefault();
+            return _context.Meets.Where(x => x.Id == id).Include(x => x.Venue).Include(x => x.Events.Select(y => y.Rounds.Select(z => z.Lanes.Select(q => q.Swimmer)))).SingleOrDefault();
         }
 
         public void InsertMeet(Meet meet)

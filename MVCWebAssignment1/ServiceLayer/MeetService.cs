@@ -87,6 +87,23 @@ namespace MVCWebAssignment1.ServiceLayer
             return meetViewModel;
         }
 
+        public Meet GetMeetDetails(int id)
+        {
+            if (id == 0)
+            {
+                throw new ArgumentException("Expected integer");
+            }
+
+            Meet meet = _meetRepository.GetMeetById(id);
+
+            if (meet == null)
+            {
+                throw new HttpException("Meet not found");
+            }
+
+            return meet;
+        }
+
         public MeetViewModel CreateView()
         {
             MeetViewModel meetViewModel = new MeetViewModel();

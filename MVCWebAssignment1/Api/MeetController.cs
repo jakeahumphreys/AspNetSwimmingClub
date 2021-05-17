@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Web.Http;
+using System.Web.Http.Results;
+using System.Web.Mvc;
 using AutoMapper;
 using FYP_WebApp.Common_Logic;
 using MVCWebAssignment1.DAL;
@@ -33,13 +35,19 @@ namespace MVCWebAssignment1.Api
             mapper = new Mapper(config);
         }
 
-        [HttpGet]
+        [System.Web.Http.HttpGet]
         public IEnumerable<MeetDto> Get()
         {
             return mapper.Map<IList<Meet>, List<MeetDto>>(_meetService.GetIndex(null,null));
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpGet]
+        public JsonResult<MeetDto> Get(int id)
+        {
+            return Json(mapper.Map<Meet, MeetDto>(_meetService.GetMeetDetails(id)));
+        }
+
+        [System.Web.Http.HttpPost]
         public IHttpActionResult Post([FromBody]MeetDto request)
         {
             if (request != null)
